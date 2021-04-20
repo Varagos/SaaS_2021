@@ -4,6 +4,7 @@ import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../src/user/entities/user.entity';
+import { UserModule } from '../src/user/user.module';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
@@ -18,6 +19,7 @@ describe('AppController (e2e)', () => {
           logging: false,
           synchronize: true,
         }),
+        UserModule,
         AppModule,
       ],
     }).compile();
@@ -30,7 +32,23 @@ describe('AppController (e2e)', () => {
     await app.close();
   });
 
-  it('/ (GET)', () => {
-    return request(app.getHttpServer()).get('/').expect(404);
+  it('/user(GET) initially empty', async () => {
+    return request(app.getHttpServer()).get('/user').expect(200).expect([]);
+  });
+
+  it('/user(POST) Succeeds', async () => {
+    const user_dto = {
+      email: 'random_email01@gmail.com',
+      password: '1001',
+    };
+    const result = await request(app.getHttpServer())
+      .post('/user')
+      .send(user_dto)
+      .expect(201);
+    expect(result.body).toEqual({
+      user_id: 1,
+      email: 'random_email01@gmail.com',
+      password: '1001',
+    });
   });
 });

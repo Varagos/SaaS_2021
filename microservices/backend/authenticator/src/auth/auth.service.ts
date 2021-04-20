@@ -16,6 +16,9 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
+  /*
+    Used by passport local
+   */
   async validateUser(email: string, pass: string): Promise<any> {
     const user = await this.userService.findOneByEmail(email);
     if (!user)
@@ -28,6 +31,9 @@ export class AuthService {
     return null;
   }
 
+  /*
+    Last part of login
+   */
   async login(user: any) {
     return this.generateJwt(user);
   }
