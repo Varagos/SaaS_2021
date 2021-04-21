@@ -69,4 +69,50 @@ describe('AppController (e2e)', () => {
       email: 'random_email01@gmail.com',
     });
   });
+
+  it('/profile(GET) no-token --> fail', async () => {
+    const res = await request(app.getHttpServer()).get('/profile').expect(401);
+  });
+
+  it('/auth/login(POST) wrong email --> fail', async () => {
+    const user_dto = {
+      email: 'randommmmmmmmmm_email01@gmail.com',
+      password: '1001',
+    };
+    return request(app.getHttpServer())
+      .post('/auth/login')
+      .send(user_dto)
+      .expect(404); //Not found
+  });
+
+  it('/auth/login(POST) wrong pass --> fail', async () => {
+    const user_dto = {
+      email: 'random_email01@gmail.com',
+      password: '100000000abc1',
+    };
+    return request(app.getHttpServer())
+      .post('/auth/login')
+      .send(user_dto)
+      .expect(401); //Not authorized
+  });
+
+  it('/auth/login(POST) missing pass field --> fail', async () => {
+    const user_dto = {
+      email: 'random_email01@gmail.com',
+    };
+    return request(app.getHttpServer())
+      .post('/auth/login')
+      .send(user_dto)
+      .expect(401);
+  });
+
+  it('/auth/login(POST) missing email field --> fail', async () => {
+    const user_dto = {
+      password: '1001',
+    };
+    return request(app.getHttpServer())
+      .post('/auth/login')
+      .send(user_dto)
+      .expect(401);
+  });
 });

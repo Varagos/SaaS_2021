@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://is1-ssl.mzstatic.com/image/thumb/Purple114/v4/a2/91/84/a29184a9-96a7-a793-c168-edb7ca05af75/contsched.rtpylhiv.png/1200x630wa.png" width="320" alt="Nest Logo" /></a>
+ <img src="https://is1-ssl.mzstatic.com/image/thumb/Purple114/v4/a2/91/84/a29184a9-96a7-a793-c168-edb7ca05af75/contsched.rtpylhiv.png/1200x630wa.png" width="320" alt="Nest Logo" /></a>
 </p>
 
 
@@ -26,6 +26,23 @@ $ npm run start:dev
 # production mode
 $ npm run start:prod
 ```
+
+
+## API Endpoints
+
+```bash
+# register a new account - POST {email, password}
+http://localhost:PORT/auth/register
+
+# Login - POST {email, password}
+http://localhost:PORT/auth/login
+
+# Get JWT profile info - GET (bearer authentication)
+http://localhost:PORT/profile
+```
+
+
+
 
 ## Test
 
