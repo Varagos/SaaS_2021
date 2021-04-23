@@ -32,10 +32,13 @@ export class AuthService {
   }
 
   /*
-    Last part of login
+    Generate the JWT
    */
   async login(user: any) {
-    return this.generateJwt(user);
+    const payload = { username: user.email, sub: user.user_id };
+    return {
+      access_token: this.jwtService.sign(payload),
+    };
   }
 
   async register(user: UserInterface) {
@@ -46,13 +49,6 @@ export class AuthService {
     const hashed_user = { ...user, password: hash };
     const result = await this.userService.create(hashed_user);
 
-    return this.generateJwt(result);
-  }
-
-  async generateJwt(user: any) {
-    const payload = { username: user.email, sub: user.user_id };
-    return {
-      access_token: this.jwtService.sign(payload),
-    };
+    return this.login(result);
   }
 }

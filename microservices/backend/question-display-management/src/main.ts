@@ -14,12 +14,12 @@ async function bootstrap() {
     },
   };
 
-  const app = await NestFactory.createMicroservice<MicroserviceOptions>(
-    AppModule,
-    microServiceOptions,
-  );
-  app.listen(() =>
-    logger.log('Microservice Question-display-management is listening...'),
-  );
+  const app = await NestFactory.create(AppModule);
+  const microservice = app.connectMicroservice(microServiceOptions);
+
+  await app.startAllMicroservicesAsync();
+  await app.listen(5003, () => {
+    console.log('Display question component is listening on port 5003...');
+  });
 }
 bootstrap();

@@ -24,15 +24,6 @@ export class KeywordService {
     );
   }
 
-  async findAll() {
-    return `This action returns all keyword`;
-  }
-
-  async findOne(id: number) {
-    return this.findOneByDesc('Helloi');
-    return `This action returns a #${id} keyword`;
-  }
-
   async findOneByDesc(desc: string): Promise<Keyword> {
     const keyword = await this.manager.findOne(Keyword, { description: desc });
     if (!keyword)

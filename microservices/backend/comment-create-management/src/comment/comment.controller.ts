@@ -1,34 +1,43 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
 import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { DeleteOneParams } from './dto/delete-comment';
+import { UpdateOneParams } from './dto/update-comment-param';
 
 @Controller('comment')
+@UseGuards(JwtAuthGuard) // Controller-scoped
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
   @Post()
-  create(@Body() createCommentDto: CreateCommentDto) {
-    return this.commentService.create(createCommentDto);
-  }
-
-  @Get()
-  findAll() {
-    return this.commentService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.commentService.findOne(+id);
+  create(@Request() request, @Body() createCommentDto: CreateCommentDto) {
+    return this.commentService.create(createCommentDto, request.user.userId);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCommentDto: UpdateCommentDto) {
-    return this.commentService.update(+id, updateCommentDto);
+  update(
+    @Param() params: UpdateOneParams,
+    @Body() updateCommentDto: UpdateCommentDto,
+  ) {
+    console.log(params, updateCommentDto);
+    return this.commentService.update(+params.id, updateCommentDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.commentService.remove(+id);
+  remove(@Param() params: DeleteOneParams, @Request() request) {
+    const requester_id = request.user.userId;
+    return this.commentService.remove(+params.id, requester_id);
   }
 }

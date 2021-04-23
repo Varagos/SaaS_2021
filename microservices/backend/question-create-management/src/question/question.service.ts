@@ -16,7 +16,10 @@ export class QuestionService {
     private keywordService: KeywordService,
   ) {}
 
-  async create(createQuestionDto: CreateQuestionDto): Promise<Question> {
+  async create(
+    createQuestionDto: CreateQuestionDto,
+    user_id: number,
+  ): Promise<Question> {
     return this.manager.transaction(async (manager) => {
       //Executed async in parallel
       const keyword_entities = await Promise.all(
@@ -32,35 +35,19 @@ export class QuestionService {
           }
         }),
       );
-
       const addedQuestion = await manager.save(Question, {
         ...createQuestionDto,
         keywords: keyword_entities,
-        user_id: 24, //find keyword from JWT?
+        user_id: user_id, //find keyword from JWT?
       });
-      // await this.publish({
-      //   ...createQuestionDto,
-      //   user_id: 1,
-      // });
-      await this.publish(addedQuestion);
+      await this.publish('question_created', addedQuestion);
       return addedQuestion;
     });
   }
 
-  async findAll() {
-    return this.manager.find(Question);
-  }
-
-  async findOne(id: number): Promise<Question> {
-    const question = await this.manager.findOne(Question, id);
-    if (!question)
-      throw new NotFoundException(`Question with id:${id} not found`);
-    return question;
-  }
-
-  async update(id: number, updateQuestionDto: UpdateQuestionDto) {
-    return `This action updates a #${id} question`;
-  }
+  // async update(id: number, updateQuestionDto: UpdateQuestionDto) {
+  //   return `This action updates a #${id} question`;
+  // }
 
   async remove(id: number) {
     return this.manager.transaction(async (manager) => {
@@ -71,7 +58,7 @@ export class QuestionService {
     });
   }
 
-  async publish(questionCreatedEvent) {
-    this.client.emit<number>('question_created', questionCreatedEvent);
+  async publish(eventName: string, questionCreatedEvent) {
+    this.client.emit<number>(eventName, questionCreatedEvent);
   }
 }

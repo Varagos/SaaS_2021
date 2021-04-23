@@ -1,15 +1,33 @@
-import { Controller } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  UseGuards,
+} from '@nestjs/common';
 import { EventPattern, MessagePattern, Payload } from '@nestjs/microservices';
 import { QuestionService } from './question.service';
+import { Question } from './entities/question.entity';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
-@Controller()
+@Controller('question')
 export class QuestionController {
   constructor(private readonly questionService: QuestionService) {}
 
   @EventPattern('question_created')
   async create(data) {
-    console.log('received event in /questions/question_created');
-    console.log(data);
     return this.questionService.create(data);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get()
+  async findAll(): Promise<Question[]> {
+    return this.questionService.findAll();
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get(':id')
+  async findOne(@Param('id', ParseIntPipe) id: string): Promise<Question> {
+    return this.questionService.findOneWithRels(+id);
   }
 }

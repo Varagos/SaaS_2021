@@ -12,28 +12,23 @@ export class CommentService {
     @InjectEntityManager() private manager: EntityManager,
     @Inject('REDIS_PUB') private client: ClientProxy,
   ) {}
-  create(createCommentDto: CreateCommentDto) {
+  create(createCommentDto: CreateCommentDto, user_id: number) {
     return this.manager.transaction(async (manager) => {
-      const comment = manager.create(Comment, createCommentDto);
+      const comment = manager.create(Comment, {
+        ...createCommentDto,
+        user_id: user_id,
+      });
       const user_created = await manager.save(comment);
       await this.client.emit<number>('comment_created', { user_created });
       return user_created;
     });
   }
 
-  findAll() {
-    return `This action returns all comment`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} comment`;
-  }
-
   update(id: number, updateCommentDto: UpdateCommentDto) {
     return `This action updates a #${id} comment`;
   }
 
-  remove(id: number) {
+  remove(id: number, requester_id: number) {
     return `This action removes a #${id} comment`;
   }
 }

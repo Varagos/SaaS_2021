@@ -13,7 +13,6 @@ export class CommentService {
       const comment = manager.create(Comment, createCommentDto);
       return manager.save(comment);
     });
-    return 'This action adds a new comment';
   }
 
   findAll() {

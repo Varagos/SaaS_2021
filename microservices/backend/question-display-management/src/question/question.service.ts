@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { QuestionInterface } from './interfaces/question.interface';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { EntityManager } from 'typeorm';
@@ -15,7 +15,6 @@ export class QuestionService {
   ) {}
 
   create(questionReceived: QuestionInterface) {
-    console.log('question received', questionReceived);
     return this.manager.transaction(async (manager) => {
       //Executed async in parallel
       const keyword_entities = await Promise.all(
@@ -41,7 +40,26 @@ export class QuestionService {
         keywords: keyword_entities,
         user: userObj,
       });
-      console.log('question saved', addedQuestion);
     });
+  }
+
+  async findAll() {
+    return this.manager.find(Question);
+  }
+
+  async findOne(id: number): Promise<Question> {
+    const question = await this.manager.findOne(Question, id);
+    if (!question)
+      throw new NotFoundException(`Question with id:${id} not found`);
+    return question;
+  }
+
+  async findOneWithRels(id: number): Promise<Question> {
+    const question = await this.manager.findOne(Question, id, {
+      relations: ['user', 'comments', 'comments.user', 'keywords'],
+    });
+    if (!question)
+      throw new NotFoundException(`Question with id:${id} not found`);
+    return question;
   }
 }

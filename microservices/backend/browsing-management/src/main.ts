@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const microserviceOptions: MicroserviceOptions = {
@@ -9,12 +10,13 @@ async function bootstrap() {
       url: 'redis://localhost:6379',
     },
   };
-  const app = await NestFactory.createMicroservice<MicroserviceOptions>(
-    AppModule,
-    microserviceOptions,
-  );
-  app.listen(() =>
-    console.log('Microservice browsing-management is listening'),
-  );
+  const app = await NestFactory.create(AppModule);
+  app.useGlobalPipes(new ValidationPipe());
+  const microservice = app.connectMicroservice(microserviceOptions);
+
+  await app.startAllMicroservicesAsync();
+  await app.listen(5004, () => {
+    console.log('Browsing management component is listening on port 5004...');
+  });
 }
 bootstrap();

@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { QuestionInterface } from './interfaces/question.interface';
 import { InjectEntityManager } from '@nestjs/typeorm';
-import { EntityManager } from 'typeorm';
+import { Between, EntityManager } from 'typeorm';
 import { Keyword } from '../keyword/entities/keyword.entity';
 import { Question } from './entities/question.entity';
 import { KeywordService } from '../keyword/keyword.service';
@@ -37,5 +37,36 @@ export class QuestionService {
       });
       console.log('question saved', addedQuestion);
     });
+  }
+
+  async findAll() {
+    //fresh first
+    return this.manager.find(Question, { order: { date: 'DESC' } });
+  }
+
+  async findOne(id: number): Promise<Question> {
+    const question = await this.manager.findOne(Question, id);
+    if (!question)
+      throw new NotFoundException(`Question with id:${id} not found`);
+    return question;
+  }
+
+  async findBetweenDates(start: Date, end: Date) {
+    // const startDate = new Date(start + 'T00:00:00');
+    // const endDate = new Date(end + 'T00:00:00');
+    const result = await this.manager.find(Question, {
+      where: { date: Between(start, end) },
+      order: { date: 'DESC' },
+    });
+    return result;
+  }
+
+  async findTens(offset: number): Promise<Question[]> {
+    return this.manager
+      .createQueryBuilder(Question, 'question')
+      .orderBy('date', 'DESC')
+      .limit(10)
+      .offset(offset * 10)
+      .getMany();
   }
 }

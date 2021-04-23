@@ -10,6 +10,7 @@ import { User } from './entities/user.entity';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { EntityManager } from 'typeorm';
 import { ClientProxy } from '@nestjs/microservices';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UserService {
@@ -18,6 +19,7 @@ export class UserService {
   constructor(
     @InjectEntityManager() private manager: EntityManager,
     @Inject('REDIS_PUB') private client: ClientProxy,
+    private configService: ConfigService,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -37,6 +39,9 @@ export class UserService {
   }
 
   async findAll(): Promise<User[]> {
+    console.log(this.configService.get<string>('DATABASE_USER'));
+    console.log(this.configService.get<string>('JWT_PUBLIC_KEY'));
+    console.log(this.configService.get<string>('JWT_PRIVATE_KEY'));
     return this.manager.find(User);
   }
 
