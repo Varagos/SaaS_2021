@@ -1,0 +1,35 @@
+import { Controller } from '@nestjs/common';
+import { MessagePattern, Payload } from '@nestjs/microservices';
+import { KeywordService } from './keyword.service';
+import { CreateKeywordDto } from './dto/create-keyword.dto';
+import { UpdateKeywordDto } from './dto/update-keyword.dto';
+
+@Controller()
+export class KeywordController {
+  constructor(private readonly keywordService: KeywordService) {}
+
+  @MessagePattern('createKeyword')
+  create(@Payload() createKeywordDto: CreateKeywordDto) {
+    return this.keywordService.create(createKeywordDto);
+  }
+
+  @MessagePattern('findAllKeyword')
+  findAll() {
+    return this.keywordService.findAll();
+  }
+
+  // @MessagePattern('findOneKeyword')
+  // findOne(@Payload() id: number) {
+  //   return this.keywordService.findOne(id);
+  // }
+
+  // @MessagePattern('updateKeyword')
+  // update(@Payload() updateKeywordDto: UpdateKeywordDto) {
+  //   return this.keywordService.update(updateKeywordDto.id, updateKeywordDto);
+  // }
+  //
+  // @MessagePattern('removeKeyword')
+  // remove(@Payload() id: number) {
+  //   return this.keywordService.remove(id);
+  // }
+}

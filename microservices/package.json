@@ -1,0 +1,17 @@
+{
+  "name": "microservices",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"cd backend/authenticator && npm run start:dev\" \"cd backend/comment-create-management && npm run start:dev\" \"cd backend/comment-question-management && npm run start:dev\" \"cd backend/browsing-management && npm run start:dev\" \"cd backend/question-display-management && npm run start:dev\"",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start-auth": "cd backend/authenticator && npm run start:dev"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@nestjs/microservices": "^7.6.15",
+    "concurrently": "^6.0.1"
+  }
+}
