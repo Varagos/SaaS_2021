@@ -39,9 +39,6 @@ export class UserService {
   }
 
   async findAll(): Promise<User[]> {
-    console.log(this.configService.get<string>('DATABASE_USER'));
-    console.log(this.configService.get<string>('JWT_PUBLIC_KEY'));
-    console.log(this.configService.get<string>('JWT_PRIVATE_KEY'));
     return this.manager.find(User);
   }
 
