@@ -3,11 +3,11 @@ import { useState } from "react";
 import ReactTags from "react-tag-autocomplete";
 import countries from "../constants/countries";
 
-const TagInput = () => {
-  const [tags, setTags] = useState([
-    { id: 184, name: "Thailand" },
-    { id: 86, name: "India" },
-  ]);
+const TagInput = ({ tags, setTags }) => {
+  // const [tags, setTags] = useState([
+  //   { id: 184, name: "Thailand" },
+  //   { id: 86, name: "India" },
+  // ]);
   const [suggestions, setSuggestions] = useState(countries);
 
   console.log(setSuggestions);

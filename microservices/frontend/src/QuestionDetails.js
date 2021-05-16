@@ -1,30 +1,35 @@
 import { useHistory, useParams } from "react-router";
+import { connect } from "react-redux";
+import { getQuestion, deleteQuestion } from "./actions/questionActions";
 import useFetch from "./useFetch";
-import Comment from "./Comment";
+import Comment from "./components/Comment";
+import axios from "axios";
 
-const QuestionDetails = () => {
+const QuestionDetails = (props) => {
   // pas id from ReactRouter Params
   const { id } = useParams();
   const {
     data: question,
     error,
     isPending,
-  } = useFetch(`http://jsonplaceholder.typicode.com/posts/${id}`);
-
-  const {
-    data: comments,
-    error: commentError,
-    isPending: commentIsPending,
-  } = useFetch(`http://jsonplaceholder.typicode.com/posts/${id}/comments`);
-  console.log(comments, commentIsPending, commentError);
+  } = useFetch(`http://localhost:3004/posts/${id}?_embed=comments`);
 
   const history = useHistory();
-  const handleClick = () => {
-    fetch(`http://localhost:8000/blogs/${id}`, {
-      method: "DELETE",
-    }).then(() => {
-      history.push("/");
-    });
+
+  const handleDelete = (questionId) => {
+    console.log("delete called", questionId);
+    props.deleteQuestion(questionId);
+    history.push("/");
+  };
+
+  const handleAddComment = () => {
+    axios
+      .post("http://localhost:3004/comments", {
+        postId: id,
+        email: "test@example.com",
+        body: "a comment body?",
+      })
+      .then((res) => console.log(res.data));
   };
 
   return (
@@ -40,10 +45,12 @@ const QuestionDetails = () => {
               {question.author}
             </p>
             <div>{question.body}</div>
-            <button onClick={handleClick}>delete</button>
-            <div className="IMPLEMENT-IT">
-              {comments &&
-                comments.map((comment) => (
+            <button onClick={handleDelete.bind(this, id)}>Delete</button>
+            <div className="TO-BE-IMPLEMENTED">
+              {/*{commentIsPending && <p>Loading comments...</p>}*/}
+              {/*{commentError && <p> Unable to load comments ...</p>}*/}
+              {question.comments &&
+                question.comments.map((comment) => (
                   <Comment
                     key={comment.id}
                     body={comment.body}
@@ -51,7 +58,7 @@ const QuestionDetails = () => {
                   />
                 ))}
             </div>
-            <button onClick={handleClick}>comment</button>
+            <button onClick={handleAddComment}>comment</button>
           </article>
         )}
       </div>
@@ -59,4 +66,10 @@ const QuestionDetails = () => {
   );
 };
 
-export default QuestionDetails;
+const mapStateToProps = (state) => ({
+  question: state.question,
+});
+
+export default connect(mapStateToProps, { getQuestion, deleteQuestion })(
+  QuestionDetails
+);

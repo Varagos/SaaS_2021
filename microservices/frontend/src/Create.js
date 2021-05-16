@@ -1,30 +1,55 @@
 import { useState } from "react";
 import { useHistory } from "react-router-dom";
 import TagInput from "./components/TagInput";
+import { connect } from "react-redux";
+import { addQuestion } from "./actions/questionActions";
 
-const Create = () => {
-  const [title, setTitle] = useState("");
-  const [body, setBody] = useState("");
+const Create = (props) => {
+  const [question, setQuestion] = useState({
+    title: "",
+    body: "",
+  });
+
+  //Pass down state to TagInput child
+  const [tags, setTags] = useState([
+    { id: 184, name: "Thailand" },
+    { id: 86, name: "India" },
+  ]);
   const [isPending, setIsPending] = useState(false);
-
   const history = useHistory();
+
+  const handleChange = (e) => {
+    setQuestion((prevState) => ({
+      ...prevState,
+      [e.target.name]: e.target.value,
+    }));
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const blog = { title, body };
+    const post = { ...question, userId: 1 };
+    console.log("post", post);
+    console.log("keywords: ", tags);
     setIsPending(true);
 
-    fetch("http://localhost:8000/blogs/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(blog),
-    }).then(() => {
-      console.log("new blog added");
-      setIsPending(false);
+    // Add question addQuestion action
+    props.addQuestion(post);
 
-      // history.go(-1);
-      history.push("/");
-    });
+    fetch("https://jsonplaceholder.typicode.com/posts", {
+      method: "POST",
+      headers: { "Content-Type": "application/json; charset=UTF-8" },
+      body: JSON.stringify(post),
+    })
+      .then((response) => response.json())
+      .then((json) => {
+        console.log("new blog added");
+        console.log(json);
+        setIsPending(false);
+
+        // history.go(-1);
+        history.push("/");
+      })
+      .catch((err) => console.log(err));
   };
 
   return (
@@ -35,21 +60,22 @@ const Create = () => {
         <input
           type="text"
           className="create-input"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          name="title"
+          value={question.title}
+          onChange={handleChange}
           required
         />
         <label>Question body:</label>
         <textarea
           type="text"
           className="create-textarea"
-          value={body}
-          onChange={(e) => setBody(e.target.value)}
+          name="body"
+          value={question.body}
+          onChange={handleChange}
           required
         />
-
         <label>Keywords:</label>
-        <TagInput />
+        <TagInput tags={tags} setTags={setTags} />
 
         {!isPending && <button className="create-button">Add question</button>}
         {isPending && (
@@ -62,4 +88,8 @@ const Create = () => {
   );
 };
 
-export default Create;
+const mapStateToProps = (state) => ({
+  question: state.question,
+});
+
+export default connect(mapStateToProps, { addQuestion })(Create);
