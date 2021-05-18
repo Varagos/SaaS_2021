@@ -1,9 +1,9 @@
-import {useEffect, useState} from "react";
+import { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import TagInput from "./components/TagInput";
 import { connect } from "react-redux";
 import { addQuestion } from "./actions/questionActions";
-import { loadUser } from "./actions/authActions";
+import { getKeywords } from "./actions/keywordActions";
 import PropTypes from 'prop-types'
 
 const Create = (props) => {
@@ -13,14 +13,13 @@ const Create = (props) => {
   });
 
   //Pass down state to TagInput child
-  const [tags, setTags] = useState([
-    { id: 184, name: "Thailand" },
-    { id: 86, name: "India" },
-  ]);
+  const [tags, setTags] = useState([]);
   const [isPending, setIsPending] = useState(false);
   const history = useHistory();
 
-  useEffect(() => props.loadUser(),[])
+  useEffect(() => {
+    props.getKeywords();
+  },[])
 
   const handleChange = (event) => {
     const { name, value } = event.target
@@ -35,14 +34,14 @@ const Create = (props) => {
     const stringKeywords = tags.map(x => x.name)
     const post = { ...question, keywords: stringKeywords};
     console.log("post", post);
-    console.log("keywords: ", tags);
-    console.log(stringKeywords)
     setIsPending(true);
 
+    console.log(post)
     props.addQuestion(post);
     history.push('/')
   };
 
+  const suggestion = props.keywords.map(({keyword_id, description}) => ({ id:keyword_id, name: description}))
 
   return (
     <div className="create">
@@ -67,7 +66,7 @@ const Create = (props) => {
           required
         />
         <label>Keywords:</label>
-        <TagInput tags={tags} setTags={setTags} />
+        <TagInput tags={tags} setTags={setTags} keywords={suggestion}/>
 
         {!isPending && <button className="create-button">Add question</button>}
         {isPending && (
@@ -81,12 +80,14 @@ const Create = (props) => {
 };
 Create.propTypes = {
   addQuestion: PropTypes.func.isRequired,
-  loadUser: PropTypes.func.isRequired,
   question: PropTypes.object,
+  getKeywords: PropTypes.func.isRequired,
+  keywords: PropTypes.array.isRequired
 }
 
 const mapStateToProps = (state) => ({
   question: state.question,
+  keywords: state.keyword.keywords
 });
 
-export default connect(mapStateToProps, { addQuestion, loadUser })(Create);
+export default connect(mapStateToProps, { addQuestion, getKeywords })(Create);

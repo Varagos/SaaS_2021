@@ -37,17 +37,20 @@ function App() {
 
               <PrivateRoute path="/create" component={Create} />
 
-              <Route exact path="/posts">
+              <Route exact path="/posts/page/:id">
                 <QuestionList />
               </Route>
 
-              <PrivateRoute path="/posts/:id" component={QuestionDetails} />
+              <PrivateRoute exact path="/posts/:id" component={QuestionDetails} />
+
               <Route path="/login">
                 <Login />
               </Route>
+
               <Route path="/register">
                 <Register />
               </Route>
+
                 <Route path="*">
                   <NotFound />
                 </Route>

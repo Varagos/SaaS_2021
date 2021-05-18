@@ -16,7 +16,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { DeleteOneParams } from './dto/delete-comment';
 import { UpdateOneParams } from './dto/update-comment-param';
 
-@Controller('comment')
+@Controller('comments')
 @UseGuards(JwtAuthGuard) // Controller-scoped
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}

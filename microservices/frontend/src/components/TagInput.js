@@ -1,16 +1,8 @@
 import React from "react";
-import { useState } from "react";
 import ReactTags from "react-tag-autocomplete";
-import countries from "../constants/countries";
+// import countries from "../constants/countries";
 
-const TagInput = ({ tags, setTags }) => {
-  // const [tags, setTags] = useState([
-  //   { id: 184, name: "Thailand" },
-  //   { id: 86, name: "India" },
-  // ]);
-  const [suggestions, setSuggestions] = useState(countries);
-
-  console.log(setSuggestions);
+const TagInput = ({ tags, setTags, keywords }) => {
 
   function reactTags() {
     return React.createRef();
@@ -36,7 +28,7 @@ const TagInput = ({ tags, setTags }) => {
         allowNew={true}
         ref={reactTags}
         tags={tags}
-        suggestions={suggestions}
+        suggestions={keywords}
         NoSuggestionsText="No suggestion found"
         onDelete={onDelete}
         onAddition={onAddition}

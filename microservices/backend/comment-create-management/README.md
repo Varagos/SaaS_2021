@@ -40,3 +40,8 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
+### Create comment
+```bash
+POST /comments
+```
+

@@ -16,3 +16,8 @@ export const REGISTER_FAIL = "REGISTER_FAIL";
 
 export const GET_ERRORS = "GET_ERRORS";
 export const CLEAR_ERRORS = "CLEAR_ERRORS";
+
+export const GET_KEYWORDS = "GET_KEYWORDS";
+export const KEYWORDS_LOADING = "KEYWORDS_LOADING"
+
+export const ADD_COMMENT = "ADD_COMMENT"

@@ -1,10 +1,10 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { KeywordService } from './keyword.service';
 import { CreateKeywordDto } from './dto/create-keyword.dto';
 import { UpdateKeywordDto } from './dto/update-keyword.dto';
 
-@Controller()
+@Controller('keywords')
 export class KeywordController {
   constructor(private readonly keywordService: KeywordService) {}
 
@@ -13,7 +13,7 @@ export class KeywordController {
     return this.keywordService.create(createKeywordDto);
   }
 
-  @MessagePattern('findAllKeyword')
+  @Get('')
   findAll() {
     return this.keywordService.findAll();
   }

@@ -1,11 +1,12 @@
 import { Link } from 'react-router-dom';
+import Jumbotron from "react-bootstrap/Jumbotron";
 
 const NotFound = () => (
-  <div className="not-found">
-    <h2>Sorry</h2>
-    <p>That page cannot be found</p>
-    <Link to="/">Back to the homepage</Link>
-  </div>
+    <Jumbotron>
+        <h1>Sorry</h1>
+        <p>This page cannot be found</p>
+        <Link to="/">Back to homepage</Link>
+    </Jumbotron>
 );
 
 export default NotFound;

@@ -13,7 +13,7 @@ import { QuestionService } from './question.service';
 import { CreateQuestionDto } from './dto/create-question.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
-@Controller('question')
+@Controller('questions')
 export class QuestionController {
   constructor(private readonly questionService: QuestionService) {}
 
@@ -31,6 +31,7 @@ export class QuestionController {
   //   return this.questionService.update(+id, updateQuestionDto);
   // }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.questionService.remove(+id);

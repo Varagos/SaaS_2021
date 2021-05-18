@@ -54,19 +54,35 @@ export class QuestionService {
   async findBetweenDates(start: Date, end: Date) {
     // const startDate = new Date(start + 'T00:00:00');
     // const endDate = new Date(end + 'T00:00:00');
-    const result = await this.manager.find(Question, {
+    return await this.manager.find(Question, {
+      relations: ['keywords'],
       where: { date: Between(start, end) },
       order: { date: 'DESC' },
     });
-    return result;
   }
 
-  async findPage(offset: number): Promise<Question[]> {
+  async findPageWithRelations(
+    page: number,
+    limit: number,
+  ): Promise<Question[]> {
+    return await this.manager.find(Question, {
+      relations: ['keywords'],
+      order: { date: 'DESC' },
+      skip: page * limit,
+      take: limit,
+    });
+  }
+
+  /*
+  Alternative findPage using queryBuilder in Case entity manager presents issues
+
+  async findPage(page: number, limit: number): Promise<Question[]> {
     return this.manager
       .createQueryBuilder(Question, 'question')
       .orderBy('date', 'DESC')
-      .limit(10)
-      .offset(offset * 10)
+      .limit(limit)
+      .offset(page * limit)
       .getMany();
   }
+  */
 }

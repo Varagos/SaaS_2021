@@ -1,30 +1,35 @@
-import { Link } from "react-router-dom";
-//import useFetch from "./useFetch";
-import { connect } from "react-redux";
-import { getQuestions } from "./actions/questionActions";
-import { loadUser } from "./actions/authActions";
-import PropTypes from "prop-types";
 import { useEffect } from "react";
+import {useHistory, useParams} from "react-router";
+import { Link} from "react-router-dom";
+import { connect } from "react-redux";
+import {getQuestions, getQuestionsPage} from "./actions/questionActions";
+import PropTypes from "prop-types";
 
-const QuestionList = (props) => {
-  const error = false;
-  const isPending = false;
+import PageButtons from "./components/PageButtons";
+
+const QuestionList = (props) => { const error = false;
+  const { id } = useParams();
+
+  const history = useHistory()
 
   //Instead of componentDidMount
   useEffect(() => {
-    props.loadUser();
+    if (!props.isAuthenticated && id !== 1)  history.push('/login')
+    if ( id < 1) history.push('/posts/page/1')
+
+      console.log(id)
     // Perhaps new action getPage here instead?
-    props.getQuestions();
-  }, []);
+    props.getQuestionsPage(id);
+
+  }, [id]);
 
   const { questions } = props.question
-
   return (
     <>
-      {error && <div>{error}</div>}
-      {isPending && <div>Loading... </div>}
+      <div className="content">
+        {error && <div>{error}</div>}
+      {props.loading && <div>Loading... </div>}
       {props.question.questions && (
-        <div className="content">
           <div className="blog-list">
             <h2>Question List</h2>
             {questions.map((question) => (
@@ -40,22 +45,24 @@ const QuestionList = (props) => {
               </div>
             ))}
           </div>
-        </div>
       )}
+        {props.isAuthenticated && <PageButtons first={1} current={id} last={100}/>}
+      </div>
     </>
   );
 };
 
 QuestionList.propTypes = {
   getQuestions: PropTypes.func.isRequired,
-  loadUser: PropTypes.func.isRequired,
+  getQuestionsPage: PropTypes.func.isRequired,
   question: PropTypes.object.isRequired,
   isAuthenticated: PropTypes.bool
 };
 
 const mapStateToProps = (state) => ({
   question: state.question,
+  loading: state.question.loading,
   isAuthenticated: state.auth.isAuthenticated
 });
 
-export default connect(mapStateToProps, { getQuestions, loadUser })(QuestionList);
+export default connect(mapStateToProps, { getQuestions, getQuestionsPage})(QuestionList);

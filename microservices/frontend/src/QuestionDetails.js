@@ -2,10 +2,10 @@ import { useHistory, useParams } from "react-router";
 import { connect } from "react-redux";
 import { getQuestion, deleteQuestion } from "./actions/questionActions";
 import Comment from "./components/Comment";
-import axios from "axios";
 import React, {useEffect} from "react";
 import dayjs from "dayjs";
 import relativeTime from 'dayjs/plugin/relativeTime'
+import NewComment from "./components/NewComment";
 
 dayjs.extend(relativeTime)
 
@@ -22,6 +22,7 @@ const QuestionDetails = (props) => {
 
   useEffect(() => {
       props.getQuestion(id)
+
   },[])
 
   const handleDelete = (questionId) => {
@@ -30,15 +31,7 @@ const QuestionDetails = (props) => {
     history.push("/");
   };
 
-  const handleAddComment = () => {
-    axios
-      .post("http://localhost:3004/comments", {
-        postId: id,
-        email: "test@example.com",
-        body: "a comment body?",
-      })
-      .then((res) => console.log(res.data));
-  };
+
 
 
   const { question, loading } = props.question
@@ -83,7 +76,7 @@ const QuestionDetails = (props) => {
                   />
                 ))}
             </div>
-            <button onClick={handleAddComment}>comment</button>
+              <NewComment questionId={id}/>
           </article>
         )}
       </div>

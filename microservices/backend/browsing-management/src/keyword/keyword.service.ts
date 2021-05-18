@@ -8,6 +8,7 @@ import { UpdateKeywordDto } from './dto/update-keyword.dto';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { EntityManager } from 'typeorm';
 import { Keyword } from './entities/keyword.entity';
+import { Question } from '../question/entities/question.entity';
 
 @Injectable()
 export class KeywordService {
@@ -25,7 +26,8 @@ export class KeywordService {
   }
 
   async findAll() {
-    return `This action returns all keyword`;
+    //fresh first
+    return this.manager.find(Keyword);
   }
 
   // async findOne(id: number) {
@@ -33,6 +35,7 @@ export class KeywordService {
   //   return `This action returns a #${id} keyword`;
   // }
 
+  // Takes keyword description and returns keyword object
   async findOneByDesc(desc: string): Promise<Keyword> {
     const keyword = await this.manager.findOne(Keyword, { description: desc });
     if (!keyword)

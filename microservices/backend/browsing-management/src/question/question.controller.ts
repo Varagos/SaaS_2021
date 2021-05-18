@@ -1,23 +1,16 @@
-import {
-  Controller,
-  Get,
-  Param,
-  ParseIntPipe,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
 import { EventPattern } from '@nestjs/microservices';
 import { QuestionService } from './question.service';
 import { Question } from './entities/question.entity';
 import { FindDatesParams } from './dto/find-dates-params';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { FindOffsetParams } from './dto/findOffset';
+import { Paginate } from './dto/paginate.dto';
 
-@Controller('question')
+@Controller('questions')
 export class QuestionController {
   constructor(private readonly questionService: QuestionService) {}
 
-  @EventPattern('question_created')
-  async create(data) {
+  @EventPattern('question_created') async create(data) {
     console.log('received event in /questions/question_created');
     return this.questionService.create(data);
   }
@@ -28,16 +21,24 @@ export class QuestionController {
     return this.questionService.findAll();
   }
 
-  @Get('/BetweenDates/_start=:start&_end=:end')
-  findSome(@Param() params: FindDatesParams): Promise<Question[]> {
-    console.log(params);
-    return this.questionService.findBetweenDates(params.start, params.end);
+  @Get('/sort_dates')
+  findSome(@Query() query: FindDatesParams): Promise<Question[]> {
+    console.log(query);
+    return this.questionService.findBetweenDates(query.start, query.end);
   }
 
-  @Get('/page=:page')
-  findPage(@Param() params: FindOffsetParams): Promise<Question[]> {
-    console.log(params.page);
-    return this.questionService.findPage(params.page - 1);
+  @Get('/paginate')
+  findPage(@Query() query: Paginate) {
+    console.log(query);
+    console.log(`This action returns page ${query.page}, limit`);
+    if (!query.limit) {
+      query.limit = 10;
+    }
+    console.log(query);
+    return this.questionService.findPageWithRelations(
+      query.page - 1,
+      query.limit,
+    );
   }
 
   @Get('/PagesCount')

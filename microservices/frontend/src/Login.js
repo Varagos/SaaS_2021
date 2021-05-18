@@ -25,18 +25,14 @@ function Login(props) {
 
   useEffect(() => {
     console.log('Initial Use Effect called')
-    console.log('prevError: ', prevError.current)
-    console.log('props.error: ', props.error)
     props.clearErrors()
   },[])
 
   useEffect(()=> {
     const { error, isAuthenticated } = props
-    console.log('Dependencies Use Effect called')
     if (error !== prevError.current) {
       // Check for register error
       if (error.id === 'LOGIN_FAIL') {
-        console.log('LOGIN_FAIL')
         const msgReceived = Array.isArray(error.msg)? error.msg[0] : error.msg
         prevError.current = props.error
         setMsg(msgReceived)
@@ -44,7 +40,6 @@ function Login(props) {
         setMsg(null)
       }
     }
-    console.log('isAuthenticated: ',isAuthenticated)
     if(isAuthenticated) {
       props.clearErrors()
       history.push('/')

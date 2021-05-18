@@ -37,7 +37,7 @@ const Home = () => {
             <HomeCard
               text="123"
               title="answer a new question"
-              linkDest="/posts"
+              linkDest="/posts/page/1"
               linkTitle="Browse questions"
             />
           </Col>
