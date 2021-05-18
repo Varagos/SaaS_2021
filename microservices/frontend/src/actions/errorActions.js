@@ -1,13 +1,16 @@
-import axios from "axios";
-import {
-  USER_LOADED,
-  USER_LOADING,
-  AUTH_ERROR,
-  LOGIN_SUCCESS,
-  LOGIN_FAIL,
-  LOGOUT_SUCCESS,
-  REGISTER_SUCCESS,
-  REGISTER_FAIL,
-} from "../actions/types";
+import { GET_ERRORS, CLEAR_ERRORS } from "./types";
 
-// Check token & load user
+// RETURN ERRORS
+export const returnErrors = (msg, status, id = null) => {
+    return {
+        type: GET_ERRORS,
+        payload: { msg, status, id }
+    }
+}
+
+// CLEAR ERRORS
+export const clearErrors = () => {
+    return {
+        type: CLEAR_ERRORS
+    }
+}

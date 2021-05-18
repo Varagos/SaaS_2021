@@ -41,16 +41,20 @@ $ npm run test:cov
 ```
 
 ## Available endpoints
-
 ```bash
 # Find all questions
 http://localhost:5004/question
+```
 
-# Find question between dates
-http://localhost:5004/question/BetweenDates/from=:start&to:end
-
-# Get 10 questions with offset (DESC order) - One webPage of questions
-http://localhost:5004/question/LimitOffset/offset=0
+### Date slice
+Find question between dates (DESC)
+```bash
+GET /question/BetweenDates/_start=2017-01-01&_end=2022-01-01
+```
+### Paginate
+Use `_page` to paginate returned data.
+```bash
+GET /question/page=6
 ```
 
 

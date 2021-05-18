@@ -1,13 +1,15 @@
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import { useHistory } from "react-router-dom";
 import TagInput from "./components/TagInput";
 import { connect } from "react-redux";
 import { addQuestion } from "./actions/questionActions";
+import { loadUser } from "./actions/authActions";
+import PropTypes from 'prop-types'
 
 const Create = (props) => {
   const [question, setQuestion] = useState({
     title: "",
-    body: "",
+    text: "",
   });
 
   //Pass down state to TagInput child
@@ -18,39 +20,29 @@ const Create = (props) => {
   const [isPending, setIsPending] = useState(false);
   const history = useHistory();
 
-  const handleChange = (e) => {
+  useEffect(() => props.loadUser(),[])
+
+  const handleChange = (event) => {
+    const { name, value } = event.target
     setQuestion((prevState) => ({
       ...prevState,
-      [e.target.name]: e.target.value,
+      [name]: value,
     }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const post = { ...question, userId: 1 };
+    const stringKeywords = tags.map(x => x.name)
+    const post = { ...question, keywords: stringKeywords};
     console.log("post", post);
     console.log("keywords: ", tags);
+    console.log(stringKeywords)
     setIsPending(true);
 
-    // Add question addQuestion action
     props.addQuestion(post);
-
-    fetch("https://jsonplaceholder.typicode.com/posts", {
-      method: "POST",
-      headers: { "Content-Type": "application/json; charset=UTF-8" },
-      body: JSON.stringify(post),
-    })
-      .then((response) => response.json())
-      .then((json) => {
-        console.log("new blog added");
-        console.log(json);
-        setIsPending(false);
-
-        // history.go(-1);
-        history.push("/");
-      })
-      .catch((err) => console.log(err));
+    history.push('/')
   };
+
 
   return (
     <div className="create">
@@ -69,8 +61,8 @@ const Create = (props) => {
         <textarea
           type="text"
           className="create-textarea"
-          name="body"
-          value={question.body}
+          name="text"
+          value={question.text}
           onChange={handleChange}
           required
         />
@@ -87,9 +79,14 @@ const Create = (props) => {
     </div>
   );
 };
+Create.propTypes = {
+  addQuestion: PropTypes.func.isRequired,
+  loadUser: PropTypes.func.isRequired,
+  question: PropTypes.object,
+}
 
 const mapStateToProps = (state) => ({
   question: state.question,
 });
 
-export default connect(mapStateToProps, { addQuestion })(Create);
+export default connect(mapStateToProps, { addQuestion, loadUser })(Create);

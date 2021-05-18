@@ -21,8 +21,7 @@ export class AuthService {
    */
   async validateUser(email: string, pass: string): Promise<any> {
     const user = await this.userService.findOneByEmail(email);
-    if (!user)
-      throw new NotFoundException(`${email} does not belong to an account.`);
+    if (!user) throw new NotFoundException('User does not exist');
     const { password: hash, ...result } = user;
     const isMatch = await bcrypt.compare(pass, hash);
     if (isMatch) {
@@ -37,7 +36,8 @@ export class AuthService {
   async login(user: any) {
     const payload = { username: user.email, sub: user.user_id };
     return {
-      access_token: this.jwtService.sign(payload),
+      token: this.jwtService.sign(payload),
+      user,
     };
   }
 

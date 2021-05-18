@@ -6,38 +6,49 @@ import {
   DELETE_QUESTION,
   QUESTIONS_LOADING,
 } from "./types";
+import { browsing , questionDisplay, questionCreate } from "../constants/config";
+import { tokenConfig } from "./authActions";
+import { returnErrors } from "./errorActions";
+
 //thunk comes in allowing us to do asynchronous request
-export const getQuestions = () => (dispatch) => {
+export const getQuestions = () => (dispatch, getState) => {
   dispatch(setQuestionsLoading());
-  //https://jsonplaceholder.typicode.com/posts
-  axios.get("http://localhost:3004/posts").then((res) =>
+  axios.get(`${browsing}/question`, tokenConfig(getState)).then((res) =>
     dispatch({
       type: GET_QUESTIONS,
       payload: res.data,
     })
-  );
+  ).catch(err => dispatch(returnErrors(err.response.data.message, err.response.status)))
 };
 
-export const getQuestion = () => {
-  return {
-    type: GET_QUESTION,
-  };
+export const getQuestion = (id) => (dispatch, getState) => {
+    dispatch(setQuestionsLoading());
+    axios.get(`${questionDisplay}/question/${id}`, tokenConfig(getState)).then((res) =>
+        dispatch({
+            type: GET_QUESTION,
+            payload: res.data,
+        })
+    ).catch(err => dispatch(returnErrors(err.response.data.message, err.response.status)))
 };
-export const addQuestion = (question) => (dispatch) => {
-  axios.post("http://localhost:3004/posts", question).then(() =>
+
+
+export const addQuestion = (question) => (dispatch, getState) => {
+  axios.post(`${questionCreate}/question`, question, tokenConfig(getState)).then((res) =>
     dispatch({
       type: ADD_QUESTION,
-      payload: question, // res.data if backend returned the newly added question
+      payload: res.data, // res.data if backend returned the newly added question
     })
-  );
+  ).catch(err => dispatch(returnErrors(err.response.data.message, err.response.status)))
 };
-export const deleteQuestion = (id) => (dispatch) => {
-  axios.delete(`http://localhost:3004/posts/${id}`).then(() =>
+
+
+export const deleteQuestion = (id) => (dispatch, getState) => {
+  axios.delete(`http://localhost:3004/posts/${id}`, tokenConfig(getState)).then(() =>
     dispatch({
       type: DELETE_QUESTION,
       payload: id,
     })
-  );
+  ).catch(err => dispatch(returnErrors(err.response.data.message, err.response.status)))
 };
 
 export const setQuestionsLoading = () => {

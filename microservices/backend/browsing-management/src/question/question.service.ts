@@ -61,7 +61,7 @@ export class QuestionService {
     return result;
   }
 
-  async findTens(offset: number): Promise<Question[]> {
+  async findPage(offset: number): Promise<Question[]> {
     return this.manager
       .createQueryBuilder(Question, 'question')
       .orderBy('date', 'DESC')

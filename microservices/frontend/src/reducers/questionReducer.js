@@ -8,6 +8,7 @@ import {
 
 const initialState = {
   questions: [],
+  question: null,
   loading: false,
 };
 
@@ -23,6 +24,8 @@ export default function (state = initialState, action) {
     case GET_QUESTION:
       return {
         ...state,
+        question: action.payload,
+        loading: false
       };
     case ADD_QUESTION:
       return {

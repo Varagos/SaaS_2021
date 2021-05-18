@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, {useEffect, useRef, useState} from "react";
 
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
@@ -6,13 +6,51 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Container from "react-bootstrap/Container";
 import Col from "react-bootstrap/Col";
 
-import { authenticator } from "./constants/config";
+import PropTypes from 'prop-types'
+import { connect} from "react-redux";
+import {login} from './actions/authActions'
+import { clearErrors} from "./actions/errorActions";
+import { useHistory} from "react-router";
+import Alert from "react-bootstrap/Alert";
 
-function Login() {
+function Login(props) {
   const [credentials, setCredentials] = useState({
     email: "",
     password: "",
   });
+  const [msg, setMsg ] = useState(null)
+  const prevError = useRef(props.error)
+
+  const history = useHistory();
+
+  useEffect(() => {
+    console.log('Initial Use Effect called')
+    console.log('prevError: ', prevError.current)
+    console.log('props.error: ', props.error)
+    props.clearErrors()
+  },[])
+
+  useEffect(()=> {
+    const { error, isAuthenticated } = props
+    console.log('Dependencies Use Effect called')
+    if (error !== prevError.current) {
+      // Check for register error
+      if (error.id === 'LOGIN_FAIL') {
+        console.log('LOGIN_FAIL')
+        const msgReceived = Array.isArray(error.msg)? error.msg[0] : error.msg
+        prevError.current = props.error
+        setMsg(msgReceived)
+      } else {
+        setMsg(null)
+      }
+    }
+    console.log('isAuthenticated: ',isAuthenticated)
+    if(isAuthenticated) {
+      props.clearErrors()
+      history.push('/')
+    }
+  })
+
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -22,36 +60,22 @@ function Login() {
     }));
   }
 
-  async function handleErrors(response) {
-    if (!response.ok) {
-      // handle wrong email / password
-      throw Error(response.statusText); // skip next then
-    }
-    return response;
+
+  function handleSubmit(event) {
+    event.preventDefault();
+    // Attempt to register
+    props.login(credentials)
   }
 
-  function handleClick(event) {
-    event.preventDefault();
-    fetch(`${authenticator}/auth/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(credentials),
-    })
-      .then(handleErrors)
-      .then((res) => res.json())
-      .then((result) => {
-        console.log("promise resolved", result);
-      })
-      .catch((error) => console.log("Error caught: ", error));
-  }
 
   return (
     // <div>
     <Container fluid="sm">
       <h1 className="text-center mt-5 mb-5">Sign in</h1>
-      <Form onSubmit={handleClick}>
+      {msg && <Alert variant="danger">
+        {msg}
+      </Alert>}
+      <Form onSubmit={handleSubmit}>
         <Form.Row className="mb-4 justify-content-md-center">
           <Form.Label column md={2}>
             Email Address:
@@ -92,4 +116,17 @@ function Login() {
   );
 }
 
-export default Login;
+
+Login.propTypes = {
+  isAuthenticated: PropTypes.bool,
+  error: PropTypes.object.isRequired,
+  login: PropTypes.func.isRequired,
+  clearErrors: PropTypes.func.isRequired
+}
+
+const mapStateToProps = state => ({
+  isAuthenticated: state.auth.isAuthenticated,
+  error: state.error
+})
+
+export default connect(mapStateToProps, {login, clearErrors})(Login);

@@ -1,4 +1,10 @@
-import { Controller, Get, Param, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  UseGuards,
+} from '@nestjs/common';
 import { EventPattern } from '@nestjs/microservices';
 import { QuestionService } from './question.service';
 import { Question } from './entities/question.entity';
@@ -22,15 +28,16 @@ export class QuestionController {
     return this.questionService.findAll();
   }
 
-  @Get('/BetweenDates/from=:start&to=:end')
+  @Get('/BetweenDates/_start=:start&_end=:end')
   findSome(@Param() params: FindDatesParams): Promise<Question[]> {
     console.log(params);
     return this.questionService.findBetweenDates(params.start, params.end);
   }
 
-  @Get('/LimitOffset/offset=:offset')
-  findTens(@Param() params: FindOffsetParams): Promise<Question[]> {
-    return this.questionService.findTens(params.offset);
+  @Get('/page=:page')
+  findPage(@Param() params: FindOffsetParams): Promise<Question[]> {
+    console.log(params.page);
+    return this.questionService.findPage(params.page - 1);
   }
 
   @Get('/PagesCount')

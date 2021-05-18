@@ -1,6 +1,9 @@
-import { IsNumberString } from 'class-validator';
+import { IsPositive, IsInt } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class FindOffsetParams {
-  @IsNumberString()
-  offset: number;
+  @Type(() => Number)
+  @IsInt()
+  @IsPositive()
+  page: number;
 }

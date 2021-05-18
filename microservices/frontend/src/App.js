@@ -1,4 +1,9 @@
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import {useEffect} from "react";
+import { loadUser } from "./actions/authActions";
+import { Provider } from "react-redux";
+import store from "./store";
+
 import AppNavbar from "./AppNavbar";
 import Home from "./Home";
 import Create from "./Create";
@@ -6,15 +11,19 @@ import QuestionDetails from "./QuestionDetails";
 import NotFound from "./NotFound";
 import Login from "./Login";
 import Register from "./Register";
+import QuestionList from "./QuestionList";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
-import QuestionList from "./QuestionList";
 
-import { Provider } from "react-redux";
-import store from "./store";
+import PrivateRoute from "./components/PrivateRoute";
 
 function App() {
+
+  useEffect(() => {
+    store.dispatch(loadUser());
+  },[])
+
   return (
     <Provider store={store}>
       <Router>
@@ -26,26 +35,23 @@ function App() {
                 <Home />
               </Route>
 
-              <Route path="/create">
-                <Create />
-              </Route>
-              <Route path="/posts">
+              <PrivateRoute path="/create" component={Create} />
+
+              <Route exact path="/posts">
                 <QuestionList />
               </Route>
 
-              <Route path="/blogs/:id">
-                <QuestionDetails />
-              </Route>
+              <PrivateRoute path="/posts/:id" component={QuestionDetails} />
               <Route path="/login">
                 <Login />
               </Route>
               <Route path="/register">
                 <Register />
               </Route>
+                <Route path="*">
+                  <NotFound />
+                </Route>
 
-              <Route path="*">
-                <NotFound />
-              </Route>
             </Switch>
           </div>
         </div>

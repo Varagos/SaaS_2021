@@ -1,20 +1,28 @@
 import { useHistory, useParams } from "react-router";
 import { connect } from "react-redux";
 import { getQuestion, deleteQuestion } from "./actions/questionActions";
-import useFetch from "./useFetch";
 import Comment from "./components/Comment";
 import axios from "axios";
+import React, {useEffect} from "react";
+import dayjs from "dayjs";
+import relativeTime from 'dayjs/plugin/relativeTime'
+
+dayjs.extend(relativeTime)
 
 const QuestionDetails = (props) => {
   // pas id from ReactRouter Params
   const { id } = useParams();
-  const {
-    data: question,
-    error,
-    isPending,
-  } = useFetch(`http://localhost:3004/posts/${id}?_embed=comments`);
+  const error = false
+  const isPending = false
+
 
   const history = useHistory();
+
+
+
+  useEffect(() => {
+      props.getQuestion(id)
+  },[])
 
   const handleDelete = (questionId) => {
     console.log("delete called", questionId);
@@ -32,6 +40,11 @@ const QuestionDetails = (props) => {
       .then((res) => console.log(res.data));
   };
 
+
+  const { question, loading } = props.question
+  console.log(loading)
+  console.log(question)
+
   return (
     <div className="content">
       <div className="blog-details">
@@ -40,11 +53,22 @@ const QuestionDetails = (props) => {
         {question && (
           <article>
             <h2>{question.title}</h2>
-            <p>
-              Written by
-              {question.author}
-            </p>
-            <div>{question.body}</div>
+              <p>
+                  <small>
+                      Asked{" "}
+                      <em>
+                          {dayjs(question.date).fromNow() }
+                      </em>
+                  </small>
+              </p>
+
+            <div><p>{question.text}</p></div>
+              <div style={{display: 'block'}} >
+              <small >
+                  Written by{" "}
+                   {question.user.email}
+              </small>
+              </div>
             <button onClick={handleDelete.bind(this, id)}>Delete</button>
             <div className="TO-BE-IMPLEMENTED">
               {/*{commentIsPending && <p>Loading comments...</p>}*/}
@@ -52,9 +76,10 @@ const QuestionDetails = (props) => {
               {question.comments &&
                 question.comments.map((comment) => (
                   <Comment
-                    key={comment.id}
-                    body={comment.body}
-                    author={comment.email}
+                    key={comment.comment_id}
+                    body={comment.text}
+                    author={comment.user.email}
+                    date={comment.date}
                   />
                 ))}
             </div>

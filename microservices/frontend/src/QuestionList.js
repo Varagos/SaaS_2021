@@ -2,23 +2,22 @@ import { Link } from "react-router-dom";
 //import useFetch from "./useFetch";
 import { connect } from "react-redux";
 import { getQuestions } from "./actions/questionActions";
+import { loadUser } from "./actions/authActions";
 import PropTypes from "prop-types";
 import { useEffect } from "react";
 
 const QuestionList = (props) => {
-  // const {
-  //   data: questions,
-  //   setData: setQuestions,
-  //   isPending,
-  //   error,
-  // } = useFetch("https://jsonplaceholder.typicode.com/posts");
   const error = false;
   const isPending = false;
 
   //Instead of componentDidMount
   useEffect(() => {
+    props.loadUser();
+    // Perhaps new action getPage here instead?
     props.getQuestions();
   }, []);
+
+  const { questions } = props.question
 
   return (
     <>
@@ -28,10 +27,11 @@ const QuestionList = (props) => {
         <div className="content">
           <div className="blog-list">
             <h2>Question List</h2>
-            {props.question.questions.map((question) => (
-              <div className="blog-preview" key={question.id}>
-                <Link to={`/blogs/${question.id}`}>
+            {questions.map((question) => (
+              <div className="blog-preview" key={question.question_id}>
+                <Link to={props.isAuthenticated? `/posts/${question.question_id}` : '#'}>
                   <h2>{question.title}</h2>
+                  <p>{question.text}</p>
                   <p>
                     Written by
                     {question.author}
@@ -48,16 +48,14 @@ const QuestionList = (props) => {
 
 QuestionList.propTypes = {
   getQuestions: PropTypes.func.isRequired,
+  loadUser: PropTypes.func.isRequired,
   question: PropTypes.object.isRequired,
+  isAuthenticated: PropTypes.bool
 };
 
-/*
-  Map action to component property
-  and redux state to component property
-  It's called question in our root Reducer
-*/
 const mapStateToProps = (state) => ({
   question: state.question,
+  isAuthenticated: state.auth.isAuthenticated
 });
 
-export default connect(mapStateToProps, { getQuestions })(QuestionList);
+export default connect(mapStateToProps, { getQuestions, loadUser })(QuestionList);
