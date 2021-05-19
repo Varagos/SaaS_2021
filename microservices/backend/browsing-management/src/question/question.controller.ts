@@ -10,7 +10,8 @@ import { Paginate } from './dto/paginate.dto';
 export class QuestionController {
   constructor(private readonly questionService: QuestionService) {}
 
-  @EventPattern('question_created') async create(data) {
+  @EventPattern('question_created')
+  async create(data) {
     console.log('received event in /questions/question_created');
     return this.questionService.create(data);
   }

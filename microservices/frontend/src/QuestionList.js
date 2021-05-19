@@ -4,8 +4,8 @@ import { Link} from "react-router-dom";
 import { connect } from "react-redux";
 import {getQuestions, getQuestionsPage} from "./actions/questionActions";
 import PropTypes from "prop-types";
-
 import PageButtons from "./components/PageButtons";
+import ListGroup from "react-bootstrap/ListGroup";
 
 const QuestionList = (props) => { const error = false;
   const { id } = useParams();
@@ -38,15 +38,17 @@ const QuestionList = (props) => { const error = false;
                   <h2>{question.title}</h2>
                   <p>{question.text}</p>
                   <p>
-                    Written by
-                    {question.author}
+                    <ListGroup horizontal>
+                      {question.keywords.map(({keyword_id, description}) =>
+                      <ListGroup.Item key={keyword_id}>{description}</ListGroup.Item>)}
+                    </ListGroup>
                   </p>
                 </Link>
               </div>
             ))}
           </div>
       )}
-        {props.isAuthenticated && <PageButtons first={1} current={id} last={100}/>}
+        {props.isAuthenticated && <PageButtons first={1} current={id} last={9}/>}
       </div>
     </>
   );

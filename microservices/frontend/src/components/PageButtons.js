@@ -1,24 +1,59 @@
-import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Button from 'react-bootstrap/Button'
 import { Link} from "react-router-dom";
+import Pagination from 'react-bootstrap/Pagination'
 
 const PageButtons = ({first, current, last}) => {
+    const range = (max) => {
+        const arr = Array(max)
+            .fill(0)
+            .map((_, i) => i + 1)
+        return arr
+    }
+
     current = parseInt(current)
     first = parseInt(first)
     last = parseInt(last)
+    const limit = 2;
+    const pagesArr = range(last)
+
     const path = '/posts/page/'
 
     return (
-    <ButtonGroup aria-label="Basic example">
-        <Button variant="secondary" as={Link} to={`${path}${current-1}`}>{"<< prev"}</Button>
-        <Button variant="secondary" as={Link} to={`${path}${first}`}>{first}</Button>
-        <Button variant="secondary" disabled={true}>...</Button>
-        <Button variant="primary" disabled={true} >{current}</Button>
-        <Button variant="secondary" disabled={true}>...</Button>
-        <Button variant="secondary" as={Link} to={`${path}${last}`}> {last}</Button>
-        <Button variant="secondary" as={Link} to={`${path}${current+1}`}>{"next >>"}</Button>
-    </ButtonGroup>
+        <Pagination>
+            <Button
+                variant={"outline-secondary"}
+                as={Link}
+                to={ current !== first ?`${path}${current-1}`: "#"}
+            >
+                {"<"}
+            </Button>
+            {(current - limit) > first && <Button variant={"outline-secondary"} as={Link} to={`${path}${first}`}>{first}</Button>}
+            {(current - limit - 1) > first && <Pagination.Ellipsis disabled={true}/>}
+
+            {pagesArr.map(ind =>
+                (Math.abs(current - ind) <= limit )?
+                    <Button
+                        key={ind}
+                        variant={ind !== current ? "outline-secondary": "outline-primary"}
+                        active={ind === current}
+                        as={Link}
+                        to={`${path}${ind}`}
+                    >
+                        {ind}
+                    </Button> : <></>
+            )}
+            {(current + limit + 1) < last && <Pagination.Ellipsis disabled={true}/>}
+            {(current + limit) < last && <Button variant={"outline-secondary"} as={Link} to={`${path}${last}`}>{last}</Button>}
+            <Button
+                variant={"outline-secondary"}
+                as={Link}
+                to={current !== last ? `${path}${current+1}`:"#"}
+            >
+                {">"}
+            </Button>
+        </Pagination>
     )
+
 }
 
 export default PageButtons;

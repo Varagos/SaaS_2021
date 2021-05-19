@@ -2,9 +2,11 @@ import Collapse from "react-bootstrap/Collapse";
 import Button from "react-bootstrap/Button";
 import {useState} from "react";
 import Form from "react-bootstrap/Form";
+import { connect} from "react-redux";
+import { addComment} from "../actions/commentActions";
 
 
-const NewComment = ({questionId}) => {
+const NewComment = (props) => {
 
     const [open, setOpen] = useState(false)
     const [text, setText ] = useState("")
@@ -12,11 +14,13 @@ const NewComment = ({questionId}) => {
     const handleSubmit = (e) => {
         e.preventDefault()
         console.log('text', text)
-        const comment = {question_id: questionId, text}
+        const comment = {question_id: props.questionId, text}
         console.log('comment', comment)
+        props.addComment(comment)
+        handleClose()
     }
 
-    const handleCancel = () => {
+    const handleClose = () => {
         setOpen(false)
         setText("")
     }
@@ -31,7 +35,7 @@ const NewComment = ({questionId}) => {
                         <Form.Label>Comment body</Form.Label>
                         <Form.Control as="textarea" rows={3} value={text} onChange={(e) => setText(e.target.value) }/>
                         <Button className="mt-3 mr-5" variant="info" type="submit">Submit</Button>
-                        <Button className="mt-3" variant="outline-danger" onClick={handleCancel}>Cancel</Button>
+                        <Button className="mt-3" variant="outline-danger" onClick={handleClose}>Cancel</Button>
                     </Form>
                 </div>
             </Collapse>
@@ -39,4 +43,4 @@ const NewComment = ({questionId}) => {
         </>
     )
 }
-export default NewComment;
+export default connect(null, {addComment})(NewComment);

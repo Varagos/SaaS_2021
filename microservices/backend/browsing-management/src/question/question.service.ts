@@ -18,13 +18,15 @@ export class QuestionService {
     return this.manager.transaction(async (manager) => {
       //Executed async in parallel
       const keyword_entities = await Promise.all(
-        questionReceived.keywords.map(async (desc) => {
+        questionReceived.keywords.map(async (keywordObj) => {
           try {
-            return await this.keywordService.findOneByDesc(desc);
+            return await this.keywordService.findOneByDesc(
+              keywordObj.description,
+            );
           } catch (err) {
             //Not found, so we can safely add
             const newKeyword = new Keyword();
-            newKeyword.description = desc;
+            newKeyword.description = keywordObj.description;
             await manager.save(newKeyword);
             return newKeyword;
           }
