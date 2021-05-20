@@ -1,5 +1,5 @@
 import {
-  ADD_COMMENT,
+  ADD_COMMENT, DELETE_COMMENT,
 } from "../actions/types";
 
 const initialState = {
@@ -12,8 +12,12 @@ export default function (state = initialState, action) {
     case ADD_COMMENT:
       return {
         ...state,
-        comment: action.payload,
+        comment: action.payload, //not really necessary could be removed
       };
+    case DELETE_COMMENT:
+        return {
+          ...state
+        }
     default:
       return state;
   }

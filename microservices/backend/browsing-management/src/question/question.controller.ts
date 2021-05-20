@@ -35,7 +35,6 @@ export class QuestionController {
     if (!query.limit) {
       query.limit = 10;
     }
-    console.log(query);
     return this.questionService.findPageWithRelations(
       query.page - 1,
       query.limit,

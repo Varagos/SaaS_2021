@@ -4,6 +4,7 @@ import Pagination from 'react-bootstrap/Pagination'
 
 const PageButtons = ({first, current, last}) => {
     const range = (max) => {
+        if(!max) return []
         const arr = Array(max)
             .fill(0)
             .map((_, i) => i + 1)

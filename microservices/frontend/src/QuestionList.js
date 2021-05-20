@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import {useHistory, useParams} from "react-router";
 import { Link} from "react-router-dom";
 import { connect } from "react-redux";
-import {getQuestions, getQuestionsPage} from "./actions/questionActions";
+import { getQuestionsPage} from "./actions/questionActions";
 import PropTypes from "prop-types";
 import PageButtons from "./components/PageButtons";
 import ListGroup from "react-bootstrap/ListGroup";
@@ -48,7 +48,7 @@ const QuestionList = (props) => { const error = false;
             ))}
           </div>
       )}
-        {props.isAuthenticated && <PageButtons first={1} current={id} last={9}/>}
+        {props.isAuthenticated && <PageButtons first={1} current={id} last={props.question.lastPage}/>}
       </div>
     </>
   );
@@ -67,4 +67,4 @@ const mapStateToProps = (state) => ({
   isAuthenticated: state.auth.isAuthenticated
 });
 
-export default connect(mapStateToProps, { getQuestions, getQuestionsPage})(QuestionList);
+export default connect(mapStateToProps, { getQuestionsPage})(QuestionList);

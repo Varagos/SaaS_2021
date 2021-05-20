@@ -1,4 +1,9 @@
-import { Inject, Injectable } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { InjectEntityManager } from '@nestjs/typeorm';
@@ -29,6 +34,15 @@ export class CommentService {
   }
 
   remove(id: number, requester_id: number) {
-    return `This action removes a #${id} comment`;
+    return this.manager.transaction(async (manager) => {
+      const comment = await manager.findOne(Comment, id);
+      if (!comment)
+        throw new NotFoundException(`comment with id: ${id} not found`);
+      if (comment.user_id !== requester_id) throw new UnauthorizedException();
+
+      const commentRemoved = await manager.remove(comment);
+      await this.client.emit<number>('comment_deleted', { comment_id: id });
+      return commentRemoved;
+    });
   }
 }

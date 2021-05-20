@@ -11,15 +11,15 @@ import { tokenConfig } from "./authActions";
 import { returnErrors } from "./errorActions";
 
 //thunk comes in allowing us to do asynchronous request
-export const getQuestions = () => (dispatch, getState) => {
-  dispatch(setQuestionsLoading());
-  axios.get(`${browsing}/questions`, tokenConfig(getState)).then((res) =>
-    dispatch({
-      type: GET_QUESTIONS,
-      payload: res.data,
-    })
-  ).catch(err => dispatch(returnErrors(err.response.data.message, err.response.status)))
-};
+// export const getQuestions = () => (dispatch, getState) => {
+//   dispatch(setQuestionsLoading());
+//   axios.get(`${browsing}/questions`, tokenConfig(getState)).then((res) =>
+//     dispatch({
+//       type: GET_QUESTIONS,
+//       payload: res.data,
+//     })
+//   ).catch(err => dispatch(returnErrors(err.response.data.message, err.response.status)))
+// };
 
 
 

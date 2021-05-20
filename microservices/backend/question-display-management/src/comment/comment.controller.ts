@@ -1,10 +1,10 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Delete } from '@nestjs/common';
 import { EventPattern, MessagePattern, Payload } from '@nestjs/microservices';
 import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 
-@Controller()
+@Controller('comments')
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
@@ -21,23 +21,14 @@ export class CommentController {
     return this.commentService.create(structuredComment);
   }
 
-  @MessagePattern('findAllComment')
-  findAll() {
-    return this.commentService.findAll();
+  @EventPattern('comment_deleted')
+  async remove(receivedData) {
+    const { comment_id } = receivedData;
+    return this.commentService.remove(comment_id);
   }
 
-  @MessagePattern('findOneComment')
-  findOne(@Payload() id: number) {
-    return this.commentService.findOne(id);
-  }
-
-  @MessagePattern('updateComment')
-  update(@Payload() updateCommentDto: UpdateCommentDto) {
-    return this.commentService.update(updateCommentDto.id, updateCommentDto);
-  }
-
-  @MessagePattern('removeComment')
-  remove(@Payload() id: number) {
-    return this.commentService.remove(id);
+  @Delete()
+  async delete() {
+    return this.commentService.remove(2);
   }
 }

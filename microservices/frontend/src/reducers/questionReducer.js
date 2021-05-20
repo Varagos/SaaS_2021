@@ -8,6 +8,7 @@ import {
 
 const initialState = {
   questions: [],
+  lastPage: null,
   question: null,
   loading: false,
 };
@@ -18,7 +19,8 @@ export default function (state = initialState, action) {
     case GET_QUESTIONS:
       return {
         ...state,
-        questions: action.payload,
+        questions: action.payload.questions,
+        lastPage: action.payload.last,
         loading: false,
       };
     case GET_QUESTION:

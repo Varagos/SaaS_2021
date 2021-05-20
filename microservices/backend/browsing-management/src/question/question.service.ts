@@ -5,6 +5,7 @@ import { Between, EntityManager } from 'typeorm';
 import { Keyword } from '../keyword/entities/keyword.entity';
 import { Question } from './entities/question.entity';
 import { KeywordService } from '../keyword/keyword.service';
+import { StandardPaginateInterface } from './interfaces/standard-paginate.interface';
 
 @Injectable()
 export class QuestionService {
@@ -66,13 +67,19 @@ export class QuestionService {
   async findPageWithRelations(
     page: number,
     limit: number,
-  ): Promise<Question[]> {
-    return await this.manager.find(Question, {
-      relations: ['keywords'],
-      order: { date: 'DESC' },
-      skip: page * limit,
-      take: limit,
-    });
+  ): Promise<StandardPaginateInterface> {
+    const [questionsAsked, questionsCount] = await this.manager.findAndCount(
+      Question,
+      {
+        relations: ['keywords'],
+        order: { date: 'DESC' },
+        skip: page * limit,
+        take: limit,
+      },
+    );
+    const finalPage = Math.ceil(questionsCount / limit);
+    return { questions: questionsAsked, last: finalPage };
+    // return questionsAsked;
   }
 
   /*
