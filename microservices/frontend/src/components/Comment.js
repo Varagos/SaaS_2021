@@ -9,9 +9,7 @@ dayjs.extend(localizedFormat)
 
 export default function Comment({id, body, author, date, userId, deleteFunc }) {
 
-    // function handleClick() {
-    //   console.log(1)
-    // }
+
 
   return (
     <Card className="">
@@ -23,7 +21,6 @@ export default function Comment({id, body, author, date, userId, deleteFunc }) {
             {userId === author.user_id &&
 
             <div className="ml-auto">
-                {/*<Button className="ml-auto pt-0" variant="link" onClick={handleClick}>Delete</Button>*/}
                 <ConfirmationModal title="Delete comment" objectId={id} deleteFunc={deleteFunc}/>
             </div>
             }

@@ -8,6 +8,8 @@ import dayjs from "dayjs";
 import relativeTime from 'dayjs/plugin/relativeTime'
 import NewComment from "./components/NewComment";
 import ConfirmationModal from "./components/ConfirmationModal";
+import ListGroup from "react-bootstrap/ListGroup";
+import Button from 'react-bootstrap/Button'
 
 dayjs.extend(relativeTime)
 
@@ -27,9 +29,8 @@ const QuestionDetails = (props) => {
   const handleDelete = (questionId) => {
     console.log("delete called", questionId);
     props.deleteQuestion(questionId);
-    history.push("/");
+    history.push(`/posts/page/1`);
   };
-
 
 
   const { question, loading } = props.question
@@ -47,7 +48,13 @@ const QuestionDetails = (props) => {
             <h2>{question.title}</h2>
 
             <div><p>{question.text}</p></div>
-               <div className="d-flex p-0 m-0">
+                <ListGroup horizontal={'sm'}>
+                  {question.keywords.map(({keyword_id, description}) =>
+                      <Button key={keyword_id} variant="outline-dark" className="mr-2" size="sm" >
+                        {description}
+                      </Button>) }
+                </ListGroup>
+                    <div className="d-flex p-0 m-0">
                    <div>
                   <p>
                     <small>

@@ -16,7 +16,15 @@ export class QuestionController {
 
   @EventPattern('question_created')
   async create(data) {
-    return this.questionService.create(data);
+    console.log('received event: question_created');
+    await this.questionService.create(data);
+  }
+
+  @EventPattern('question_deleted')
+  async remove(receivedData) {
+    console.log('received event: question_deleted');
+    const { question_id } = receivedData;
+    await this.questionService.remove(question_id);
   }
 
   @UseGuards(JwtAuthGuard)

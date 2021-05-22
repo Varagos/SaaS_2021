@@ -15,17 +15,32 @@ import { UpdateCommentDto } from './dto/update-comment.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { DeleteOneParams } from './dto/delete-comment';
 import { UpdateOneParams } from './dto/update-comment-param';
+import { EventPattern } from '@nestjs/microservices';
 
 @Controller('comments')
-@UseGuards(JwtAuthGuard) // Controller-scoped
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
+  @EventPattern('question_deleted')
+  async removeQuestion(receivedData) {
+    console.log('received event: question_deleted');
+    const { question_id } = receivedData;
+    await this.commentService.removeQuestionComments(+question_id);
+  }
+
+  /* For testing purposes */
+  @Get()
+  findAll() {
+    return this.commentService.findAll();
+  }
+
+  @UseGuards(JwtAuthGuard) // Controller-scoped
   @Post()
   create(@Request() request, @Body() createCommentDto: CreateCommentDto) {
     return this.commentService.create(createCommentDto, request.user.userId);
   }
 
+  @UseGuards(JwtAuthGuard) // Controller-scoped
   @Patch(':id')
   update(
     @Param() params: UpdateOneParams,
@@ -35,6 +50,7 @@ export class CommentController {
     return this.commentService.update(+params.id, updateCommentDto);
   }
 
+  @UseGuards(JwtAuthGuard) // Controller-scoped
   @Delete(':id')
   remove(@Param() params: DeleteOneParams, @Request() request) {
     const requester_id = request.user.userId;

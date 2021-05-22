@@ -17,7 +17,7 @@ export class CommentService {
     @InjectEntityManager() private manager: EntityManager,
     @Inject('REDIS_PUB') private client: ClientProxy,
   ) {}
-  create(createCommentDto: CreateCommentDto, user_id: number) {
+  async create(createCommentDto: CreateCommentDto, user_id: number) {
     return this.manager.transaction(async (manager) => {
       const comment = manager.create(Comment, {
         ...createCommentDto,
@@ -28,21 +28,28 @@ export class CommentService {
       return user_created;
     });
   }
+  async findAll() {
+    return this.manager.find(Comment);
+  }
 
   update(id: number, updateCommentDto: UpdateCommentDto) {
     return `This action updates a #${id} comment`;
   }
 
-  remove(id: number, requester_id: number) {
+  async remove(id: number, requesterId: number) {
     return this.manager.transaction(async (manager) => {
       const comment = await manager.findOne(Comment, id);
       if (!comment)
-        throw new NotFoundException(`comment with id: ${id} not found`);
-      if (comment.user_id !== requester_id) throw new UnauthorizedException();
+        throw new NotFoundException(`Comment with id: ${id} not found`);
+      if (comment.user_id !== requesterId) throw new UnauthorizedException();
 
       const commentRemoved = await manager.remove(comment);
       await this.client.emit<number>('comment_deleted', { comment_id: id });
       return commentRemoved;
     });
+  }
+
+  async removeQuestionComments(questionId: number) {
+    await this.manager.delete(Comment, { question_id: questionId });
   }
 }

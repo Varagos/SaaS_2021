@@ -38,7 +38,7 @@ export default function (state = initialState, action) {
       return {
         ...state,
         questions: state.questions.filter(
-          (question) => question.id !== action.payload
+          (question) => question.question_id !== action.payload
         ),
       };
     case QUESTIONS_LOADING:

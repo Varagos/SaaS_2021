@@ -42,6 +42,10 @@ export class QuestionService {
     });
   }
 
+  async remove(id: number) {
+    await this.manager.delete(Question, id);
+  }
+
   async findAll() {
     //fresh first
     return this.manager.find(Question, { order: { date: 'DESC' } });

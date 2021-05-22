@@ -1,4 +1,9 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { CreateQuestionDto } from './dto/create-question.dto';
 import { UpdateQuestionDto } from './dto/update-question.dto';
 import { InjectEntityManager } from '@nestjs/typeorm';
@@ -49,12 +54,16 @@ export class QuestionService {
   //   return `This action updates a #${id} question`;
   // }
 
-  async remove(id: number) {
+  async remove(id: number, requesterId: number) {
     return this.manager.transaction(async (manager) => {
       const question = await manager.findOne(Question, id);
-      if (!question) throw new NotFoundException(`Question ${id} not found.`);
-      await manager.delete(Question, id);
-      return { message: `Question ${id} deleted` };
+      if (!question)
+        throw new NotFoundException(`Question with id: ${id} not found`);
+      if (question.user_id !== requesterId) throw new UnauthorizedException();
+
+      const questionRemoved = await manager.remove(question);
+      await this.publish('question_deleted', { question_id: id });
+      return questionRemoved;
     });
   }
 

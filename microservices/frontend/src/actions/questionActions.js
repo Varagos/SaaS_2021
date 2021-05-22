@@ -57,7 +57,7 @@ export const addQuestion = (question) => (dispatch, getState) => {
 
 
 export const deleteQuestion = (id) => (dispatch, getState) => {
-  axios.delete(`http://localhost:3004/posts/${id}`, tokenConfig(getState)).then(() =>
+  axios.delete(`${questionCreate}/questions/${id}`, tokenConfig(getState)).then(() =>
     dispatch({
       type: DELETE_QUESTION,
       payload: id,

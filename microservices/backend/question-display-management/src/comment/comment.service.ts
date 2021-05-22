@@ -8,10 +8,10 @@ import { Comment } from './entities/comment.entity';
 @Injectable()
 export class CommentService {
   constructor(@InjectEntityManager() private manager: EntityManager) {}
-  create(createCommentDto: CreateCommentDto) {
+  async create(createCommentDto: CreateCommentDto) {
     return this.manager.transaction(async (manager) => {
       const comment = manager.create(Comment, createCommentDto);
-      return manager.save(comment);
+      return manager.save(comment); // Reject is handled outside - slight performance benefit
     });
   }
 

@@ -38,7 +38,7 @@ const QuestionList = (props) => { const error = false;
                   <h2>{question.title}</h2>
                   <p>{question.text}</p>
                   <p>
-                    <ListGroup horizontal>
+                    <ListGroup horizontal={'sm'}>
                       {question.keywords.map(({keyword_id, description}) =>
                       <ListGroup.Item key={keyword_id}>{description}</ListGroup.Item>)}
                     </ListGroup>
