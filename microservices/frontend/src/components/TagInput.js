@@ -19,7 +19,7 @@ const TagInput = ({ tags, setTags, keywords }) => {
   }
 
   function onValidate(tag) {
-    return /^[a-z]{3,12}$/i.test(tag.name);
+    return /^[a-z0-9-]{3,12}$/i.test(tag.name);
   }
 
   return (
@@ -33,12 +33,13 @@ const TagInput = ({ tags, setTags, keywords }) => {
         onDelete={onDelete}
         onAddition={onAddition}
         onValidate={onValidate}
+        delimiters={['Enter', 'Tab',' ']}
       />
       <p>
         <small>
           <em>
-            Tags must be 3-12 characters in length and only contain the letters
-            A-Z
+            Tags must be 3-20 characters in length and only contain the letters
+            A-Z,numbers or hyphens(-)
           </em>
         </small>
       </p>

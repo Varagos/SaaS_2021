@@ -3,7 +3,7 @@ import {
   GET_QUESTION,
   ADD_QUESTION,
   DELETE_QUESTION,
-  QUESTIONS_LOADING,
+  QUESTIONS_LOADING, END_QUESTIONS_LOADING,
 } from "../actions/types";
 
 const initialState = {
@@ -38,14 +38,20 @@ export default function (state = initialState, action) {
       return {
         ...state,
         questions: state.questions.filter(
-          (question) => question.question_id !== action.payload
+          (question) => question.question_id !== Number(action.payload)
         ),
+        question: null,
       };
     case QUESTIONS_LOADING:
       return {
         ...state,
         loading: true,
       };
+    case END_QUESTIONS_LOADING:
+      return {
+        ...state,
+        loading: false
+      }
     default:
       return state;
   }

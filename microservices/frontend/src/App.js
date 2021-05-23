@@ -31,6 +31,7 @@ function App() {
           <AppNavbar />
           <div>
             <Switch>
+
               <Route exact path="/">
                 <Home />
               </Route>

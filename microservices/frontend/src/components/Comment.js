@@ -12,8 +12,8 @@ export default function Comment({id, body, author, date, userId, deleteFunc }) {
 
 
   return (
-    <Card className="">
-      <Card.Body className="pt-0 mt-0">
+    <Card >
+      <Card.Body className="pt-3 mt-0">
         <Card.Title className="d-flex p-0 m-0">
           <div>
               <small className="text-muted">{author.email} commented </small>
@@ -25,7 +25,7 @@ export default function Comment({id, body, author, date, userId, deleteFunc }) {
             </div>
             }
         </Card.Title>
-        <Card.Text>{body}</Card.Text>
+        <Card.Text className="mt-3">{body}</Card.Text>
         <Card.Text>
           <small className="text-muted font-italic">{dayjs(date).format('LLL')}</small>
         </Card.Text>

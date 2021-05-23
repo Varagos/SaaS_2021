@@ -81,9 +81,8 @@ export class QuestionService {
         take: limit,
       },
     );
-    const finalPage = Math.ceil(questionsCount / limit);
+    const finalPage = Math.ceil(questionsCount / limit) || 1; // return 1 if zero
     return { questions: questionsAsked, last: finalPage };
-    // return questionsAsked;
   }
 
   /*

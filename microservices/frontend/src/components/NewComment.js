@@ -13,9 +13,7 @@ const NewComment = (props) => {
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        console.log('text', text)
         const comment = {question_id: props.questionId, text}
-        console.log('comment', comment)
         props.addComment(comment)
         handleClose()
     }
@@ -33,7 +31,12 @@ const NewComment = (props) => {
                 <div id="collapse-input">
                     <Form onSubmit={handleSubmit}>
                         <Form.Label>Comment body</Form.Label>
-                        <Form.Control as="textarea" rows={3} value={text} onChange={(e) => setText(e.target.value) }/>
+                        <Form.Control
+                            as="textarea"
+                            rows={3}
+                            value={text}
+                            required
+                            onChange={(e) => setText(e.target.value) }/>
                         <Button className="mt-3 mr-5" variant="info" type="submit">Submit</Button>
                         <Button className="mt-3" variant="outline-danger" onClick={handleClose}>Cancel</Button>
                     </Form>

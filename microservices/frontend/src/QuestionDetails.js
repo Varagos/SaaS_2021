@@ -10,14 +10,14 @@ import NewComment from "./components/NewComment";
 import ConfirmationModal from "./components/ConfirmationModal";
 import ListGroup from "react-bootstrap/ListGroup";
 import Button from 'react-bootstrap/Button'
+import Container from 'react-bootstrap/Container'
+import NotFound from "./NotFound";
 
 dayjs.extend(relativeTime)
 
 const QuestionDetails = (props) => {
   // pas id from ReactRouter Params
   const { id } = useParams();
-  const error = false
-  const isPending = false
 
   const history = useHistory();
 
@@ -34,51 +34,46 @@ const QuestionDetails = (props) => {
 
 
   const { question, loading } = props.question
-  console.log(loading)
-  console.log(question)
+    const { error } = props
 
   return (
-    <div className="content">
+      <Container className="my-5 pt-3">
       <div className="blog-details">
-        {isPending && <div>Loading... </div>}
-        {error && <div>{error} </div>}
+        {loading && <div>Loading... </div>}
+        {error.status &&
+        <div>
+            {error.status === 404? <NotFound /> : error.msg}
+        </div>}
         {question && (
           <article>
-              <div className="pb-5">
-            <h2>{question.title}</h2>
+            <div className="p-3 mb-5 rounded bg-light">
+              <h3 className="mb-3">{question.title}</h3>
+              <div className="mt-4 mb-5"> <p> {question.text} </p> </div>
 
-            <div><p>{question.text}</p></div>
-                <ListGroup horizontal={'sm'}>
-                  {question.keywords.map(({keyword_id, description}) =>
-                      <Button key={keyword_id} variant="outline-dark" className="mr-2" size="sm" >
-                        {description}
-                      </Button>) }
-                </ListGroup>
-                    <div className="d-flex p-0 m-0">
-                   <div>
-                  <p>
+              <ListGroup horizontal={'sm'} className="my-3">
+                {question.keywords.map(({keyword_id, description}) =>
+                    <Button key={keyword_id} variant="outline-dark" className="mr-2" size="sm" >
+                      {description}
+                    </Button>) }
+              </ListGroup>
+              <div className="d-flex p-0 m-0">
+                <div>
                     <small>
                       Asked by {question.user.email} {" "}
                       <em>
                         {dayjs(question.date).fromNow() }
                       </em>
                     </small>
-                  </p>
-                   </div>
-                 {props.user?.user_id === question.user.user_id &&
+                </div>
 
+                 {props.user?.user_id === question.user.user_id &&
                  <div className="ml-auto">
-                   {/*<Button className="ml-auto pt-0" variant="link" onClick={handleClick}>Delete</Button>*/}
                    <ConfirmationModal title="Delete question" objectId={id} deleteFunc={handleDelete}/>
                  </div>
                  }
                </div>
-              </div>
+            </div>
 
-
-            <div className="TO-BE-IMPLEMENTED">
-              {/*{commentIsPending && <p>Loading comments...</p>}*/}
-              {/*{commentError && <p> Unable to load comments ...</p>}*/}
               {question.comments &&
                 question.comments.map((comment) => (
                   <Comment
@@ -91,18 +86,20 @@ const QuestionDetails = (props) => {
                     deleteFunc={props.deleteComment}
                   />
                 ))}
-            </div>
+            <div className="mt-5">
               <NewComment questionId={id}/>
+            </div>
           </article>
         )}
       </div>
-    </div>
+      </Container>
   );
 };
 
 const mapStateToProps = (state) => ({
   question: state.question,
-  user: state.auth.user
+  user: state.auth.user,
+    error: state.error
 });
 
 export default connect(mapStateToProps, { getQuestion, deleteQuestion,deleteComment })(
