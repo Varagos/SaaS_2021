@@ -1,7 +1,4 @@
-import {
-  GET_KEYWORDS,
-  KEYWORDS_LOADING,
-} from "../actions/types";
+import { GET_KEYWORDS, KEYWORDS_LOADING } from '../actions/types';
 
 const initialState = {
   keywords: [],
@@ -9,7 +6,6 @@ const initialState = {
 };
 
 export default function (state = initialState, action) {
-  //action is an object with a type attached
   switch (action.type) {
     case GET_KEYWORDS:
       return {

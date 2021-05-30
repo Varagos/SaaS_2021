@@ -3,8 +3,11 @@ import {
   GET_QUESTION,
   ADD_QUESTION,
   DELETE_QUESTION,
-  QUESTIONS_LOADING, END_QUESTIONS_LOADING,
-} from "../actions/types";
+  QUESTIONS_LOADING,
+  END_QUESTIONS_LOADING,
+  ADD_COMMENT,
+  DELETE_COMMENT,
+} from '../actions/types';
 
 const initialState = {
   questions: [],
@@ -14,7 +17,7 @@ const initialState = {
 };
 
 export default function (state = initialState, action) {
-  //action is an object with a type attached
+  // action is an object with a type attached
   switch (action.type) {
     case GET_QUESTIONS:
       return {
@@ -27,7 +30,7 @@ export default function (state = initialState, action) {
       return {
         ...state,
         question: action.payload,
-        loading: false
+        loading: false,
       };
     case ADD_QUESTION:
       return {
@@ -50,8 +53,16 @@ export default function (state = initialState, action) {
     case END_QUESTIONS_LOADING:
       return {
         ...state,
-        loading: false
-      }
+        loading: false,
+      };
+    case ADD_COMMENT:
+      return {
+        ...state,
+      };
+    case DELETE_COMMENT:
+      return {
+        ...state,
+      };
     default:
       return state;
   }

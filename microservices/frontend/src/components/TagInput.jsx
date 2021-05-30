@@ -1,9 +1,9 @@
-import React from "react";
-import ReactTags from "react-tag-autocomplete";
+import React from 'react';
+import ReactTags from 'react-tag-autocomplete';
 // import countries from "../constants/countries";
+import PropTypes from 'prop-types';
 
 const TagInput = ({ tags, setTags, keywords }) => {
-
   function reactTags() {
     return React.createRef();
   }
@@ -25,15 +25,15 @@ const TagInput = ({ tags, setTags, keywords }) => {
   return (
     <div>
       <ReactTags
-        allowNew={true}
+        allowNew
         ref={reactTags}
         tags={tags}
         suggestions={keywords}
-        NoSuggestionsText="No suggestion found"
+        NoSuggestionsText='No suggestion found'
         onDelete={onDelete}
         onAddition={onAddition}
         onValidate={onValidate}
-        delimiters={['Enter', 'Tab',' ']}
+        delimiters={['Enter', 'Tab', ' ']}
       />
       <p>
         <small>
@@ -45,6 +45,22 @@ const TagInput = ({ tags, setTags, keywords }) => {
       </p>
     </div>
   );
+};
+
+TagInput.propTypes = {
+  tags: PropTypes.arrayOf(
+    PropTypes.shape({
+      keyword_id: PropTypes.number,
+      description: PropTypes.string,
+    })
+  ).isRequired,
+  keywords: PropTypes.arrayOf(
+    PropTypes.shape({
+      keyword_id: PropTypes.number,
+      description: PropTypes.string,
+    })
+  ).isRequired,
+  setTags: PropTypes.func.isRequired,
 };
 
 export default TagInput;

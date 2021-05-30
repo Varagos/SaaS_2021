@@ -1,28 +1,30 @@
 module.exports = {
-    "env": {
-        "browser": true,
-        "es2021": true
+  env: {
+    browser: true,
+    es2021: true,
+  },
+  extends: ['plugin:react/recommended', 'airbnb', 'prettier'],
+  parserOptions: {
+    ecmaFeatures: {
+      jsx: true,
     },
-    "extends": [
-        "eslint:recommended",
-        "plugin:react/recommended"
+    ecmaVersion: 12,
+    sourceType: 'module',
+  },
+  plugins: ['react', 'prettier'],
+  rules: {
+    // suppress errors for missing 'import React' in files
+    'react/react-in-jsx-scope': 'off',
+    'import/no-named-as-default': 0,
+    'prettier/prettier': [
+      'error',
+      {
+        printWidth: 80,
+        trailingComma: 'es5',
+        semi: true,
+        jsxSingleQuote: true,
+        singleQuote: true,
+      },
     ],
-    "parserOptions": {
-        "ecmaFeatures": {
-            "jsx": true
-        },
-        "ecmaVersion": 12,
-        "sourceType": "module"
-    },
-    "plugins": [
-        "react"
-    ],
-    "rules": {
-        // suppress errors for missing 'import React' in files
-        "react/react-in-jsx-scope": "off",
-        // allow jsx syntax in js files (for next.js project)
-        "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }], //should add ".ts" if typescript project,
-        "react/prop-types": "off",
-        // "no-unused-vars": "off"
-    }
+  },
 };
