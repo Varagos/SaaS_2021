@@ -1,4 +1,5 @@
 import {
+  HttpService,
   Inject,
   Injectable,
   NotFoundException,
@@ -10,12 +11,15 @@ import { InjectEntityManager } from '@nestjs/typeorm';
 import { EntityManager } from 'typeorm';
 import { ClientProxy } from '@nestjs/microservices';
 import { Comment } from './entities/comment.entity';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class CommentService {
   constructor(
     @InjectEntityManager() private manager: EntityManager,
     @Inject('REDIS_PUB') private client: ClientProxy,
+    private httpService: HttpService,
+    private configService: ConfigService
   ) {}
   async create(createCommentDto: CreateCommentDto, user_id: number) {
     return this.manager.transaction(async (manager) => {
@@ -23,9 +27,10 @@ export class CommentService {
         ...createCommentDto,
         user_id: user_id,
       });
-      const user_created = await manager.save(comment);
-      await this.client.emit<number>('comment_created', { user_created });
-      return user_created;
+      const comment_created = await manager.save(comment);
+      // await this.client.emit<number>('comment_created', { comment_created });
+      await this.publish('COMMENT_ADDED', comment_created);
+      return comment_created;
     });
   }
   async findAll() {
@@ -51,5 +56,28 @@ export class CommentService {
 
   async removeQuestionComments(questionId: number) {
     await this.manager.delete(Comment, { question_id: questionId });
+  }
+
+  async publish(eventType: string, eventPayload) {
+    // this.client.emit<number>(eventName, eventPayload);
+
+    const host = this.configService.get<string>('CHOREOGRAPHER_HOST');
+    const port = this.configService.get<string>('CHOREOGRAPHER_PORT');
+    const url = `http://${host}:${port}/bus`;
+
+    this.httpService
+      .post(url, {
+        type: eventType,
+        payload: { comment: eventPayload },
+      })
+      .subscribe(
+        (response) => {
+          // console.log(response.statusText);
+          console.log(1);
+        },
+        (error) => {
+          console.log('ERROR:', error);
+        }
+      );
   }
 }

@@ -8,13 +8,10 @@ import { UpdateCommentDto } from './dto/update-comment.dto';
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
-  @EventPattern('comment_created')
+  @EventPattern('COMMENT_ADDED')
   async create(receivedComment) {
-    const {
-      user_id,
-      question_id,
-      ...structuredComment
-    } = receivedComment.user_created;
+    const { user_id, question_id, ...structuredComment } =
+      receivedComment.payload.comment;
     structuredComment.user = { user_id };
     structuredComment.question = { question_id };
 

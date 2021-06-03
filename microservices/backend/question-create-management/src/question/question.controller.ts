@@ -23,14 +23,6 @@ export class QuestionController {
     return this.questionService.create(createQuestionDto, request.user.userId);
   }
 
-  // @Patch(':id')
-  // update(
-  //   @Param('id') id: string,
-  //   @Body() updateQuestionDto: UpdateQuestionDto,
-  // ) {
-  //   return this.questionService.update(+id, updateQuestionDto);
-  // }
-
   @Delete(':id')
   remove(@Param() params: DeleteQuestionDto, @Request() request) {
     const requester_id = request.user.userId;

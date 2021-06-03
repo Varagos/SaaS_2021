@@ -10,10 +10,12 @@ import { Paginate } from './dto/paginate.dto';
 export class QuestionController {
   constructor(private readonly questionService: QuestionService) {}
 
-  @EventPattern('question_created')
+  @EventPattern('QUESTION_ADDED')
   async create(data) {
-    console.log('received event in /questions/question_created');
-    return this.questionService.create(data);
+    if (data.type) {
+      console.log('received event:', data.type);
+      return this.questionService.create(data.payload.question);
+    }
   }
 
   @EventPattern('question_deleted')
@@ -44,7 +46,7 @@ export class QuestionController {
     }
     return this.questionService.findPageWithRelations(
       query.page - 1,
-      query.limit,
+      query.limit
     );
   }
 
