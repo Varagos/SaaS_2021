@@ -1,11 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import {
+  ExecutionContext,
+  INestApplication,
+  ValidationPipe,
+} from '@nestjs/common';
 import * as request from 'supertest';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../src/user/entities/user.entity';
 import { AuthModule } from '../src/auth/auth.module';
 import { AppModule } from '../src/app.module';
 import { ConfigModule } from '@nestjs/config';
+import { JwtAuthGuard } from '../src/auth/guards/jwt-auth.guard';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
@@ -25,7 +30,16 @@ describe('AppController (e2e)', () => {
           isGlobal: true,
         }),
       ],
-    }).compile();
+    })
+      .overrideGuard(JwtAuthGuard)
+      .useValue({
+        canActivate: (context: ExecutionContext) => {
+          const req = context.switchToHttp().getRequest();
+          req.user = { user_id: 1, email: 'test@example.org' };
+          return true;
+        },
+      })
+      .compile();
 
     app = module.createNestApplication(); // Instantiate full Nest runtime env
     app.useGlobalPipes(new ValidationPipe());
@@ -52,7 +66,7 @@ describe('AppController (e2e)', () => {
 
   it('/auth/register(POST) success', async () => {
     const userInstance = {
-      email: 'random_email01@gmail.com',
+      email: 'test@example.org',
       password: '1001',
     };
     const result = await request(app.getHttpServer())
@@ -63,7 +77,7 @@ describe('AppController (e2e)', () => {
     expect(result.body).toEqual({
       token: expect.any(String),
       user: {
-        email: 'random_email01@gmail.com',
+        email: 'test@example.org',
         user_id: 1,
       },
     });
@@ -71,7 +85,7 @@ describe('AppController (e2e)', () => {
 
   it('LOGIN (SUCCESS) ', async () => {
     const user_dto = {
-      email: 'random_email01@gmail.com',
+      email: 'test@example.org',
       password: '1001',
     };
     const res = await request(app.getHttpServer())
@@ -81,7 +95,7 @@ describe('AppController (e2e)', () => {
     expect(res.body).toEqual({
       token: expect.any(String),
       user: {
-        email: 'random_email01@gmail.com',
+        email: 'test@example.org',
         user_id: expect.any(Number),
       },
     });
@@ -93,12 +107,8 @@ describe('AppController (e2e)', () => {
       .expect(200);
     expect(res2.body).toEqual({
       user_id: res.body.user.user_id,
-      email: 'random_email01@gmail.com',
+      email: 'test@example.org',
     });
-  });
-
-  it('Profile no-token --> fail', async () => {
-    return request(app.getHttpServer()).get('/auth/profile').expect(401);
   });
 
   it('LOGIN wrong email --> fail', async () => {
@@ -114,7 +124,7 @@ describe('AppController (e2e)', () => {
 
   it('Login wrong pass --> fail', async () => {
     const user_dto = {
-      email: 'random_email01@gmail.com',
+      email: 'test@example.org',
       password: '100000000abc1',
     };
     return request(app.getHttpServer())

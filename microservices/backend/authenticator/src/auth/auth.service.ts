@@ -13,13 +13,14 @@ import { User } from '../user/entities/user.entity';
 export class AuthService {
   constructor(
     private userService: UserService,
-    private jwtService: JwtService,
+    private jwtService: JwtService
   ) {}
 
   /*
     Used by passport local
    */
   async validateUser(email: string, pass: string): Promise<any> {
+    console.log('VALIDATING-2');
     const user = await this.userService.findOneByEmail(email);
     if (!user) throw new NotFoundException('User does not exist');
     const { password: hash, ...result } = user;
