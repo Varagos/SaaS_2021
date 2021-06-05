@@ -20,10 +20,11 @@ import { User } from '../user/entities/user.entity';
         const options: JwtModuleOptions = {
           privateKey: configService.get('JWT_PRIVATE_KEY'),
           publicKey: configService.get('JWT_PUBLIC_KEY'),
+          secret: process.env.NODE_ENV === 'test' && 'secret-key',
           signOptions: {
             expiresIn: '1h',
             issuer: 'AskMeAnything',
-            algorithm: 'RS256',
+            algorithm: process.env.NODE_ENV !== 'test' ? 'RS256' : 'HS256',
           },
         };
         return options;

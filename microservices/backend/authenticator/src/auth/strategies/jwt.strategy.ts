@@ -16,7 +16,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         process.env.NODE_ENV !== 'test'
           ? configService.get('JWT_PUBLIC_KEY')
           : 'secret-key',
-      algorithms: ['RS256'],
+      algorithms: process.env.NODE_ENV !== 'test' ? ['RS256'] : ['HS256'],
     });
   }
   async validate(payload: any) {
