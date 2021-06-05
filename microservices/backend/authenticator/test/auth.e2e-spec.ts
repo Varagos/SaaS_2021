@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../src/user/entities/user.entity';
 import { AuthModule } from '../src/auth/auth.module';
 import { AppModule } from '../src/app.module';
+import { ConfigModule } from '@nestjs/config';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
@@ -20,7 +21,9 @@ describe('AppController (e2e)', () => {
           synchronize: true,
         }),
         AuthModule,
-        AppModule,
+        ConfigModule.forRoot({
+          isGlobal: true,
+        }),
       ],
     }).compile();
 
