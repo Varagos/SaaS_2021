@@ -21,6 +21,7 @@ export class AuthService {
    */
   async validateUser(email: string, pass: string): Promise<any> {
     console.log('VALIDATING-2');
+    console.log(process.env.NODE_ENV);
     const user = await this.userService.findOneByEmail(email);
     if (!user) throw new NotFoundException('User does not exist');
     const { password: hash, ...result } = user;
