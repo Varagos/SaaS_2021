@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { Transport, MicroserviceOptions } from '@nestjs/microservices';
 import { AppModule } from './app.module';
 import { Logger } from '@nestjs/common';
+import { AppService } from './app.service';
 
 const logger = new Logger('Main');
 
@@ -24,5 +25,9 @@ async function bootstrap() {
   await app.listen(5003, () => {
     console.log('Display question component is listening on port 5003...');
   });
+
+  const appService = app.get(AppService);
+  console.log(appService.getHello());
+  await appService.synchronizeData();
 }
 bootstrap();

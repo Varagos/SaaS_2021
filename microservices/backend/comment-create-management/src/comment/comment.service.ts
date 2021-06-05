@@ -1,6 +1,6 @@
 import {
+  BadRequestException,
   HttpService,
-  Inject,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -9,7 +9,6 @@ import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { EntityManager } from 'typeorm';
-import { ClientProxy } from '@nestjs/microservices';
 import { Comment } from './entities/comment.entity';
 import { ConfigService } from '@nestjs/config';
 
@@ -17,7 +16,6 @@ import { ConfigService } from '@nestjs/config';
 export class CommentService {
   constructor(
     @InjectEntityManager() private manager: EntityManager,
-    @Inject('REDIS_PUB') private client: ClientProxy,
     private httpService: HttpService,
     private configService: ConfigService
   ) {}
@@ -28,11 +26,11 @@ export class CommentService {
         user_id: user_id,
       });
       const comment_created = await manager.save(comment);
-      // await this.client.emit<number>('comment_created', { comment_created });
       await this.publish('COMMENT_ADDED', comment_created);
       return comment_created;
     });
   }
+
   async findAll() {
     return this.manager.find(Comment);
   }
@@ -47,9 +45,8 @@ export class CommentService {
       if (!comment)
         throw new NotFoundException(`Comment with id: ${id} not found`);
       if (comment.user_id !== requesterId) throw new UnauthorizedException();
-
       const commentRemoved = await manager.remove(comment);
-      await this.client.emit<number>('comment_deleted', { comment_id: id });
+      await this.publish('COMMENT_DELETED', { comment_id: id });
       return commentRemoved;
     });
   }
@@ -59,8 +56,6 @@ export class CommentService {
   }
 
   async publish(eventType: string, eventPayload) {
-    // this.client.emit<number>(eventName, eventPayload);
-
     const host = this.configService.get<string>('CHOREOGRAPHER_HOST');
     const port = this.configService.get<string>('CHOREOGRAPHER_PORT');
     const url = `http://${host}:${port}/bus`;
@@ -68,12 +63,11 @@ export class CommentService {
     this.httpService
       .post(url, {
         type: eventType,
-        payload: { comment: eventPayload },
+        payload: eventPayload,
       })
       .subscribe(
         (response) => {
-          // console.log(response.statusText);
-          console.log(1);
+          console.log(response.statusText);
         },
         (error) => {
           console.log('ERROR:', error);

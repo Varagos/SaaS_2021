@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { QuestionInterface } from './interfaces/question.interface';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { Between, EntityManager } from 'typeorm';
@@ -11,18 +11,20 @@ import { StandardPaginateInterface } from './interfaces/standard-paginate.interf
 export class QuestionService {
   constructor(
     @InjectEntityManager() private manager: EntityManager,
-    private keywordService: KeywordService,
+    private keywordService: KeywordService
   ) {}
+  private readonly logger = new Logger(QuestionService.name);
 
   create(questionReceived: QuestionInterface) {
-    console.log('question received', questionReceived);
+    this.logger.log(`question received: ${questionReceived}`);
+    console.log(questionReceived);
     return this.manager.transaction(async (manager) => {
       //Executed async in parallel
       const keyword_entities = await Promise.all(
         questionReceived.keywords.map(async (keywordObj) => {
           try {
             return await this.keywordService.findOneByDesc(
-              keywordObj.description,
+              keywordObj.description
             );
           } catch (err) {
             //Not found, so we can safely add
@@ -31,14 +33,15 @@ export class QuestionService {
             await manager.save(newKeyword);
             return newKeyword;
           }
-        }),
+        })
       );
 
       const addedQuestion = await manager.save(Question, {
         ...questionReceived,
         keywords: keyword_entities,
       });
-      console.log('question saved', addedQuestion);
+      this.logger.log(`question saved: ${addedQuestion}`);
+      console.log(addedQuestion);
     });
   }
 
@@ -70,7 +73,7 @@ export class QuestionService {
 
   async findPageWithRelations(
     page: number,
-    limit: number,
+    limit: number
   ): Promise<StandardPaginateInterface> {
     const [questionsAsked, questionsCount] = await this.manager.findAndCount(
       Question,
@@ -79,7 +82,7 @@ export class QuestionService {
         order: { date: 'DESC' },
         skip: page * limit,
         take: limit,
-      },
+      }
     );
     const finalPage = Math.ceil(questionsCount / limit) || 1; // return 1 if zero
     return { questions: questionsAsked, last: finalPage };

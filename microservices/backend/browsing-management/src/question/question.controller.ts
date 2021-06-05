@@ -14,14 +14,14 @@ export class QuestionController {
   async create(data) {
     if (data.type) {
       console.log('received event:', data.type);
-      return this.questionService.create(data.payload.question);
+      return this.questionService.create(data.payload);
     }
   }
 
-  @EventPattern('question_deleted')
+  @EventPattern('QUESTION_DELETED')
   async remove(receivedData) {
-    console.log('received event: question_deleted');
-    const { question_id } = receivedData;
+    console.log('received event:', receivedData.type);
+    const { question_id } = receivedData.payload;
     await this.questionService.remove(+question_id);
   }
 

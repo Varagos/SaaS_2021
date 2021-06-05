@@ -21,10 +21,10 @@ import { EventPattern } from '@nestjs/microservices';
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
-  @EventPattern('question_deleted')
+  @EventPattern('QUESTION_DELETED')
   async removeQuestion(receivedData) {
-    console.log('received event: question_deleted');
-    const { question_id } = receivedData;
+    console.log('received event', receivedData.payload);
+    const { question_id } = receivedData.payload;
     await this.commentService.removeQuestionComments(+question_id);
   }
 
@@ -44,7 +44,7 @@ export class CommentController {
   @Patch(':id')
   update(
     @Param() params: UpdateOneParams,
-    @Body() updateCommentDto: UpdateCommentDto,
+    @Body() updateCommentDto: UpdateCommentDto
   ) {
     console.log(params, updateCommentDto);
     return this.commentService.update(+params.id, updateCommentDto);

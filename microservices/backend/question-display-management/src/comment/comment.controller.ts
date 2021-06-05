@@ -11,21 +11,16 @@ export class CommentController {
   @EventPattern('COMMENT_ADDED')
   async create(receivedComment) {
     const { user_id, question_id, ...structuredComment } =
-      receivedComment.payload.comment;
+      receivedComment.payload;
     structuredComment.user = { user_id };
     structuredComment.question = { question_id };
 
     return this.commentService.create(structuredComment);
   }
 
-  @EventPattern('comment_deleted')
+  @EventPattern('COMMENT_DELETED')
   async remove(receivedData) {
-    const { comment_id } = receivedData;
+    const { comment_id } = receivedData.payload;
     return this.commentService.remove(comment_id);
-  }
-
-  @Delete()
-  async delete() {
-    return this.commentService.remove(2);
   }
 }

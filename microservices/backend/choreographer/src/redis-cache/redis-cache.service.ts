@@ -10,7 +10,7 @@ export class RedisCacheService {
   }
 
   async set(key, value) {
-    await this.cache.set(key, value, 1000);
+    await this.cache.set(key, value);
   }
 
   async reset() {
@@ -18,6 +18,6 @@ export class RedisCacheService {
   }
 
   async del(key) {
-    await this.cache.del(key);
+    return await this.cache.del(key);
   }
 }
