@@ -10,6 +10,10 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+	
+    defaults: 
+      run:
+        working-directory: microservices/backend/authenticator
 
     strategy:
       matrix:
@@ -21,9 +25,6 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Install dependencies
-      	working-directory: microservices/backend/authenticator
-      	run: npm ci
-      	
+      - run: npm ci
       - run: npm run build --if-present
       - run: npm run test:e2e
