@@ -14,9 +14,21 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 export class QuestionController {
   constructor(private readonly questionService: QuestionService) {}
 
-  @EventPattern('question_created')
+  @EventPattern('QUESTION_ADDED')
   async create(data) {
-    return this.questionService.create(data);
+    if (data.type) {
+      console.log('Received Event:', data.type);
+      await this.questionService.create(data.payload);
+    }
+    // console.log('received event: question_created');
+    // await this.questionService.create(data);
+  }
+
+  @EventPattern('QUESTION_DELETED')
+  async remove(receivedData) {
+    console.log('received event:', receivedData.type);
+    const { question_id } = receivedData.payload;
+    await this.questionService.remove(question_id);
   }
 
   @UseGuards(JwtAuthGuard)

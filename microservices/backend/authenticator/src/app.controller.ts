@@ -1,15 +1,7 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  Request,
-  UseGuards,
-} from '@nestjs/common';
-import { LocalAuthGuard } from './auth/guards/local-auth.guard';
-import { NewUserDto } from './user/dto/new-user.dto';
+/* eslint-disable no-unused-vars */
+import { Controller, Get } from '@nestjs/common';
+
 import { AuthService } from './auth/auth.service';
-import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { ConfigService } from '@nestjs/config';
 /*
   The builtin Guard invokes the Passport strategy and kicks off the steps of validation
@@ -21,30 +13,6 @@ export class AppController {
     private authService: AuthService,
     private configService: ConfigService,
   ) {}
-
-  @UseGuards(LocalAuthGuard)
-  @Post('auth/login')
-  async login(@Request() req) {
-    /*
-    Passport automatically creates user object
-    based on value returned from validate()
-    */
-    return this.authService.login(req.user);
-  }
-
-  @Post('auth/register')
-  async register(@Body() newUserDto: NewUserDto) {
-    return this.authService.register(newUserDto);
-  }
-
-  /*
-    Our JwtAuthGuard assigns the user property to the Request once validated
-   */
-  @UseGuards(JwtAuthGuard)
-  @Get('profile')
-  getProfile(@Request() req) {
-    return req.user;
-  }
 
   @Get('publicKey')
   async sharePK(): Promise<string> {

@@ -1,16 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
-import { AppModule } from '../src/app.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../src/user/entities/user.entity';
-import { UserModule } from '../src/user/user.module';
+import { AuthModule } from '../src/auth/auth.module';
+import { AppModule } from '../src/app.module';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
+    const module: TestingModule = await Test.createTestingModule({
       imports: [
         TypeOrmModule.forRoot({
           type: 'sqlite',
@@ -19,12 +19,13 @@ describe('AppController (e2e)', () => {
           logging: false,
           synchronize: true,
         }),
-        UserModule,
+        AuthModule,
         AppModule,
       ],
     }).compile();
 
-    app = moduleFixture.createNestApplication();
+    app = module.createNestApplication(); // Instantiate full Nest runtime env
+    app.useGlobalPipes(new ValidationPipe());
     await app.init();
   });
 
@@ -32,21 +33,40 @@ describe('AppController (e2e)', () => {
     await app.close();
   });
 
+  it('Register(FAIL) missing email field', async () => {
+    return request(app.getHttpServer())
+      .post('/auth/register')
+      .send({ password: '1001' })
+      .expect(400);
+  });
+
+  it('Register(FAIL) missing pass field', async () => {
+    return request(app.getHttpServer())
+      .post('/auth/register')
+      .send({ email: 'test@test.com' })
+      .expect(400);
+  });
+
   it('/auth/register(POST) success', async () => {
-    const user_dto = {
+    const userInstance = {
       email: 'random_email01@gmail.com',
       password: '1001',
     };
-    const res = await request(app.getHttpServer())
+    const result = await request(app.getHttpServer())
       .post('/auth/register')
-      .send(user_dto)
+      .send(userInstance)
       .expect(201);
-    expect(res.body).toEqual({
-      access_token: expect.any(String),
+
+    expect(result.body).toEqual({
+      token: expect.any(String),
+      user: {
+        email: 'random_email01@gmail.com',
+        user_id: 1,
+      },
     });
   });
 
-  it('/auth/login(POST) ', async () => {
+  it('LOGIN (SUCCESS) ', async () => {
     const user_dto = {
       email: 'random_email01@gmail.com',
       password: '1001',
@@ -56,25 +76,29 @@ describe('AppController (e2e)', () => {
       .send(user_dto)
       .expect(201);
     expect(res.body).toEqual({
-      access_token: expect.any(String),
+      token: expect.any(String),
+      user: {
+        email: 'random_email01@gmail.com',
+        user_id: expect.any(Number),
+      },
     });
 
-    const token = res.body.access_token;
+    const token = res.body.token;
     const res2 = await request(app.getHttpServer())
-      .get('/profile')
+      .get('/auth/profile')
       .set('Authorization', 'Bearer ' + token)
       .expect(200);
     expect(res2.body).toEqual({
-      user_id: expect.any(Number),
+      user_id: res.body.user.user_id,
       email: 'random_email01@gmail.com',
     });
   });
 
-  it('/profile(GET) no-token --> fail', async () => {
-    const res = await request(app.getHttpServer()).get('/profile').expect(401);
+  it('Profile no-token --> fail', async () => {
+    return request(app.getHttpServer()).get('/auth/profile').expect(401);
   });
 
-  it('/auth/login(POST) wrong email --> fail', async () => {
+  it('LOGIN wrong email --> fail', async () => {
     const user_dto = {
       email: 'randommmmmmmmmm_email01@gmail.com',
       password: '1001',
@@ -85,7 +109,7 @@ describe('AppController (e2e)', () => {
       .expect(404); //Not found
   });
 
-  it('/auth/login(POST) wrong pass --> fail', async () => {
+  it('Login wrong pass --> fail', async () => {
     const user_dto = {
       email: 'random_email01@gmail.com',
       password: '100000000abc1',
@@ -96,7 +120,7 @@ describe('AppController (e2e)', () => {
       .expect(401); //Not authorized
   });
 
-  it('/auth/login(POST) missing pass field --> fail', async () => {
+  it('Login(POST) missing pass field --> fail', async () => {
     const user_dto = {
       email: 'random_email01@gmail.com',
     };
@@ -106,7 +130,7 @@ describe('AppController (e2e)', () => {
       .expect(401);
   });
 
-  it('/auth/login(POST) missing email field --> fail', async () => {
+  it('Login(POST) missing email field --> fail', async () => {
     const user_dto = {
       password: '1001',
     };

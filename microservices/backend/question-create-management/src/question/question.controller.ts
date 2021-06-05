@@ -1,10 +1,9 @@
 import {
   Controller,
-  Get,
   Post,
   Body,
-  Patch,
   Param,
+  Request,
   Delete,
   UseGuards,
   Req,
@@ -12,27 +11,21 @@ import {
 import { QuestionService } from './question.service';
 import { CreateQuestionDto } from './dto/create-question.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { DeleteQuestionDto } from './dto/delete-question.dto';
 
-@Controller('question')
+@Controller('questions')
+@UseGuards(JwtAuthGuard)
 export class QuestionController {
   constructor(private readonly questionService: QuestionService) {}
 
-  @UseGuards(JwtAuthGuard)
   @Post()
   create(@Req() request, @Body() createQuestionDto: CreateQuestionDto) {
     return this.questionService.create(createQuestionDto, request.user.userId);
   }
 
-  // @Patch(':id')
-  // update(
-  //   @Param('id') id: string,
-  //   @Body() updateQuestionDto: UpdateQuestionDto,
-  // ) {
-  //   return this.questionService.update(+id, updateQuestionDto);
-  // }
-
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.questionService.remove(+id);
+  remove(@Param() params: DeleteQuestionDto, @Request() request) {
+    const requester_id = request.user.userId;
+    return this.questionService.remove(+params.id, requester_id);
   }
 }

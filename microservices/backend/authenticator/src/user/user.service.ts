@@ -4,8 +4,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { newUserInterface } from './interfaces/new-user.interface';
 import { User } from './entities/user.entity';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { EntityManager } from 'typeorm';
@@ -19,10 +18,10 @@ export class UserService {
   constructor(
     @InjectEntityManager() private manager: EntityManager,
     @Inject('REDIS_PUB') private client: ClientProxy,
-    private configService: ConfigService,
+    private configService: ConfigService
   ) {}
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
+  async create(createUserDto: newUserInterface): Promise<User> {
     return this.manager.transaction(async (manager) => {
       //Create entity
       const user = manager.create(User, createUserDto);
@@ -39,9 +38,6 @@ export class UserService {
   }
 
   async findAll(): Promise<User[]> {
-    console.log(this.configService.get<string>('DATABASE_USER'));
-    console.log(this.configService.get<string>('JWT_PUBLIC_KEY'));
-    console.log(this.configService.get<string>('JWT_PRIVATE_KEY'));
     return this.manager.find(User);
   }
 
@@ -56,15 +52,15 @@ export class UserService {
     return this.manager.findOne(User, { email: email });
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
-    return this.manager.transaction(async (manager) => {
-      const user = await manager.findOne(User, id);
-      if (!user) throw new NotFoundException(`User ${id} not found.`);
-      // merge updateUserDto into user
-      manager.merge(User, user, updateUserDto);
-      return manager.save(user);
-    });
-  }
+  // async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+  //   return this.manager.transaction(async (manager) => {
+  //     const user = await manager.findOne(User, id);
+  //     if (!user) throw new NotFoundException(`User ${id} not found.`);
+  //     // merge updateUserDto into user
+  //     manager.merge(User, user, updateUserDto);
+  //     return manager.save(user);
+  //   });
+  // }
 
   async remove(id: number): Promise<void> {
     return this.manager.transaction(async (manager) => {

@@ -1,19 +1,28 @@
-import { Controller, Get, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
 import { EventPattern } from '@nestjs/microservices';
 import { QuestionService } from './question.service';
 import { Question } from './entities/question.entity';
 import { FindDatesParams } from './dto/find-dates-params';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { FindOffsetParams } from './dto/findOffset';
+import { Paginate } from './dto/paginate.dto';
 
-@Controller('question')
+@Controller('questions')
 export class QuestionController {
   constructor(private readonly questionService: QuestionService) {}
 
-  @EventPattern('question_created')
+  @EventPattern('QUESTION_ADDED')
   async create(data) {
-    console.log('received event in /questions/question_created');
-    return this.questionService.create(data);
+    if (data.type) {
+      console.log('received event:', data.type);
+      return this.questionService.create(data.payload);
+    }
+  }
+
+  @EventPattern('QUESTION_DELETED')
+  async remove(receivedData) {
+    console.log('received event:', receivedData.type);
+    const { question_id } = receivedData.payload;
+    await this.questionService.remove(+question_id);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -22,15 +31,23 @@ export class QuestionController {
     return this.questionService.findAll();
   }
 
-  @Get('/BetweenDates/from=:start&to=:end')
-  findSome(@Param() params: FindDatesParams): Promise<Question[]> {
-    console.log(params);
-    return this.questionService.findBetweenDates(params.start, params.end);
+  @Get('/sort_dates')
+  findSome(@Query() query: FindDatesParams): Promise<Question[]> {
+    console.log(query);
+    return this.questionService.findBetweenDates(query.start, query.end);
   }
 
-  @Get('/LimitOffset/offset=:offset')
-  findTens(@Param() params: FindOffsetParams): Promise<Question[]> {
-    return this.questionService.findTens(params.offset);
+  @Get('/paginate')
+  findPage(@Query() query: Paginate) {
+    console.log(query);
+    console.log(`This action returns page ${query.page}, limit`);
+    if (!query.limit) {
+      query.limit = 10;
+    }
+    return this.questionService.findPageWithRelations(
+      query.page - 1,
+      query.limit
+    );
   }
 
   @Get('/PagesCount')

@@ -14,8 +14,8 @@ export class QuestionService {
     private keywordService: KeywordService,
   ) {}
 
-  create(questionReceived: QuestionInterface) {
-    return this.manager.transaction(async (manager) => {
+  async create(questionReceived: QuestionInterface) {
+    await this.manager.transaction(async (manager) => {
       //Executed async in parallel
       const keyword_entities = await Promise.all(
         questionReceived.keywords.map(async (keywordObj) => {
@@ -32,15 +32,17 @@ export class QuestionService {
           }
         }),
       );
-
       const userObj = { user_id: questionReceived.user_id };
-
-      const addedQuestion = await manager.save(Question, {
+      await manager.save(Question, {
         ...questionReceived,
         keywords: keyword_entities,
         user: userObj,
       });
     });
+  }
+
+  async remove(id: number) {
+    await this.manager.delete(Question, id); //Should also delete its comments
   }
 
   async findAll() {

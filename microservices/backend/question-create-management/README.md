@@ -35,3 +35,9 @@ $ npm run test:e2e
 # test coverage
 $ npm run test:cov
 ```
+
+### Create new question  
+jwt bearer required
+```bash
+POST /questions
+```

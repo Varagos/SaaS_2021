@@ -24,6 +24,11 @@ export class KeywordService {
     );
   }
 
+  async findAll() {
+    //fresh first
+    return this.manager.find(Keyword);
+  }
+
   async findOneByDesc(desc: string): Promise<Keyword> {
     const keyword = await this.manager.findOne(Keyword, { description: desc });
     if (!keyword)

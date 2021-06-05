@@ -40,3 +40,16 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
+### Endpoints
+Authentication with jwt token is required as bearer header.
+
+Create a new comment
+```bash
+POST /comments
+```  
+
+Delete an existing comment provided you are its author  
+```bash
+DELETE /comments/:id
+```
+

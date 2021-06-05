@@ -10,10 +10,16 @@ import {
 import { KeywordService } from './keyword.service';
 import { CreateKeywordDto } from './dto/create-keyword.dto';
 import { UpdateKeywordDto } from './dto/update-keyword.dto';
+import { Keyword } from './entities/keyword.entity';
 
-@Controller('keyword')
+@Controller('keywords')
 export class KeywordController {
   constructor(private readonly keywordService: KeywordService) {}
+
+  @Get('')
+  findAll(): Promise<Keyword[]> {
+    return this.keywordService.findAll();
+  }
 
   @Post()
   create(@Body() createKeywordDto: CreateKeywordDto) {
