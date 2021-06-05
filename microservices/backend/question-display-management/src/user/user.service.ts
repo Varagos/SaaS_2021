@@ -5,7 +5,6 @@ import {
 } from '@nestjs/common';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { EntityManager } from 'typeorm';
-import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
 
@@ -15,7 +14,7 @@ export class UserService {
   //that will be saved in private field manager
   constructor(@InjectEntityManager() private manager: EntityManager) {}
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
+  async create(createUserDto): Promise<User> {
     const user = this.manager.create(User, createUserDto);
     return this.manager.save(user);
   }

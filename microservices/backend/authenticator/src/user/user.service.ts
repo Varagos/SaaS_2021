@@ -1,6 +1,6 @@
 import {
   BadRequestException,
-  Inject,
+  HttpService,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -8,31 +8,27 @@ import { newUserInterface } from './interfaces/new-user.interface';
 import { User } from './entities/user.entity';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { EntityManager } from 'typeorm';
-import { ClientProxy } from '@nestjs/microservices';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UserService {
-  //each time a userService is created, an entity manager must be passed
-  //that will be saved in private field manager
   constructor(
     @InjectEntityManager() private manager: EntityManager,
-    @Inject('REDIS_PUB') private client: ClientProxy,
-    private configService: ConfigService
+    private configService: ConfigService,
+    private httpService: HttpService
   ) {}
 
   async create(createUserDto: newUserInterface): Promise<User> {
     return this.manager.transaction(async (manager) => {
-      //Create entity
       const user = manager.create(User, createUserDto);
-      const email_exists = await this.findOneByEmail(user.email);
-      if (email_exists) throw new BadRequestException('User already exists');
+      const emailExists = await this.findOneByEmail(user.email);
+      if (emailExists) throw new BadRequestException('User already exists');
       //Save entity to DB - return final object promise (with id)
       const user_result = await manager.save(user).then((result) => {
         delete result.password;
         return result;
       });
-      await this.client.emit<number>('user_created', { user_result });
+      await this.publish('USER_ADDED', user_result);
       return user_result;
     });
   }
@@ -68,5 +64,23 @@ export class UserService {
       if (!user) throw new NotFoundException(`User ${id} not found.`);
       await manager.delete(User, id);
     });
+  }
+
+  async publish(eventType: string, eventPayload) {
+    if (process.env.NODE_ENV === 'test') return;
+    const host = this.configService.get<string>('CHOREOGRAPHER_HOST');
+    const port = this.configService.get<string>('CHOREOGRAPHER_PORT');
+    const url = `http://${host}:${port}/bus`;
+
+    this.httpService
+      .post(url, { type: eventType, payload: eventPayload })
+      .subscribe(
+        (response) => {
+          console.log(eventType, response.statusText);
+        },
+        (error) => {
+          console.log('ERROR:', error);
+        }
+      );
   }
 }
