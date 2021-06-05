@@ -1,3 +1,6 @@
+backend/dbClean.sh
+frontend/src/constants/
+
 # Logs
 logs
 *.log
