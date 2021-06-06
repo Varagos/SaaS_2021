@@ -4,7 +4,8 @@ import { QuestionService } from './question.service';
 import { Question } from './entities/question.entity';
 import { FindDatesParams } from './dto/find-dates-params';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { Paginate } from './dto/paginate.dto';
+import { PaginateDto } from './dto/paginate.dto';
+import { PaginateKeywordsDto } from './dto/paginate-keywords.dto';
 
 @Controller('questions')
 export class QuestionController {
@@ -31,27 +32,34 @@ export class QuestionController {
     return this.questionService.findAll();
   }
 
-  @Get('/sort_dates')
-  findSome(@Query() query: FindDatesParams): Promise<Question[]> {
-    console.log(query);
-    return this.questionService.findBetweenDates(query.start, query.end);
-  }
-
-  @Get('/paginate')
-  findPage(@Query() query: Paginate) {
-    console.log(query);
-    console.log(`This action returns page ${query.page}, limit`);
-    if (!query.limit) {
-      query.limit = 10;
-    }
-    return this.questionService.findPageWithRelations(
+  @Get('paginate')
+  findPage(@Query() query: PaginateDto) {
+    console.log('Received Query:', query);
+    return this.questionService.findSimplePagination(
       query.page - 1,
       query.limit
     );
   }
 
-  @Get('/PagesCount')
-  findPageCount(): number {
-    return 1;
+  @Get('keywords')
+  findByKeywords(@Query() query: PaginateKeywordsDto) {
+    console.log('Received Query:', query);
+    return this.questionService.findKeywordsPagination(
+      query.page - 1,
+      query.keywords,
+      query.limit
+    );
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('sort_dates')
+  findSome(@Query() query: FindDatesParams) {
+    console.log(query);
+    return this.questionService.findBetweenDates(
+      query.start,
+      query.end,
+      query.page - 1,
+      query.limit
+    );
   }
 }

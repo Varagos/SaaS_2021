@@ -7,7 +7,11 @@ export class AuthService {
   async findPublicKey(): Promise<string> {
     const response = await this.httpService
       .get('http://localhost:5000/publicKey')
-      .toPromise();
+      .toPromise()
+      .catch((err) => {
+        console.log('findPublicKey', err.code);
+        return err;
+      });
     return response.data;
   }
 }

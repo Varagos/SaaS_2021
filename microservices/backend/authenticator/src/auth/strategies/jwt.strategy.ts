@@ -19,7 +19,15 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       algorithms: process.env.NODE_ENV !== 'test' ? ['RS256'] : ['HS256'],
     });
   }
+
   async validate(payload: any) {
-    return { user_id: payload.sub, email: payload.username };
+    const issued = new Date(payload.iat * 1000);
+    const expires = new Date(payload.exp * 1000);
+    return {
+      user_id: payload.sub,
+      email: payload.username,
+      issued,
+      expires,
+    };
   }
 }

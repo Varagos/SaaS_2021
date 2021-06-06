@@ -42,4 +42,7 @@ export class AppService {
     console.log('Deleting queue:', type);
     return this.redisCacheService.del(type);
   }
+  async resetStores() {
+    return await this.redisCacheService.reset();
+  }
 }

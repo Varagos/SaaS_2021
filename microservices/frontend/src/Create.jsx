@@ -46,6 +46,7 @@ const Create = ({ keywords, getKeywords, addQuestion }) => {
       setIsPending(true);
 
       addQuestion(post);
+      setTags([]);
       history.push('/');
     }
   };
@@ -92,7 +93,12 @@ const Create = ({ keywords, getKeywords, addQuestion }) => {
           </Form.Group>
           {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
           <label>Keywords:</label>
-          <TagInput tags={tags} setTags={setTags} keywords={suggestion} />
+          <TagInput
+            tags={tags}
+            setTags={setTags}
+            keywords={suggestion}
+            allowNew
+          />
 
           <Button variant='info' disabled={isPending} type='submit'>
             {isPending ? 'Adding... question' : 'Add question'}

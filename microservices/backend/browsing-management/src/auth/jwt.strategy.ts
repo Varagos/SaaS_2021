@@ -9,19 +9,23 @@ import { ConfigService } from '@nestjs/config';
  */
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(
-    private authService: AuthService,
-    private configService: ConfigService
-  ) {
+  constructor(private authService: AuthService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: configService.get<string>('JWT_PUBLIC_KEY'),
       algorithms: ['RS256'],
+      secretOrKeyProvider: async (request, jwtToken, done) => {
+        const publicKey = await this.authService.findPublicKey();
+        // On error publicKey is undefined => Unauthorized
+        done(null, publicKey);
+      },
     });
   }
 
   async validate(payload: any) {
-    return { userId: payload.sub, username: payload.username };
+    return {
+      userId: payload.sub,
+      username: payload.username,
+    };
   }
 }

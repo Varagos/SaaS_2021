@@ -21,8 +21,6 @@ import { AppService } from './app.service';
       isGlobal: true,
     }),
     HttpModule,
-    QuestionModule,
-    CommentModule,
   ],
   providers: [AppService],
 })

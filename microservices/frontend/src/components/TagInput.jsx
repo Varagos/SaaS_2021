@@ -3,7 +3,13 @@ import ReactTags from 'react-tag-autocomplete';
 // import countries from "../constants/countries";
 import PropTypes from 'prop-types';
 
-const TagInput = ({ tags, setTags, keywords }) => {
+const TagInput = ({
+  tags,
+  setTags,
+  keywords,
+  allowNew,
+  includeDescription,
+}) => {
   function reactTags() {
     return React.createRef();
   }
@@ -25,7 +31,7 @@ const TagInput = ({ tags, setTags, keywords }) => {
   return (
     <div>
       <ReactTags
-        allowNew
+        allowNew={allowNew}
         ref={reactTags}
         tags={tags}
         suggestions={keywords}
@@ -35,14 +41,16 @@ const TagInput = ({ tags, setTags, keywords }) => {
         onValidate={onValidate}
         delimiters={['Enter', 'Tab', ' ']}
       />
-      <p>
-        <small>
-          <em>
-            Tags must be 3-20 characters in length and only contain the letters
-            A-Z,numbers or hyphens(-)
-          </em>
-        </small>
-      </p>
+      {includeDescription && (
+        <p>
+          <small>
+            <em>
+              Tags must be 3-20 characters in length and only contain the
+              letters A-Z,numbers or hyphens(-)
+            </em>
+          </small>
+        </p>
+      )}
     </div>
   );
 };
@@ -61,6 +69,13 @@ TagInput.propTypes = {
     })
   ).isRequired,
   setTags: PropTypes.func.isRequired,
+  allowNew: PropTypes.bool,
+  includeDescription: PropTypes.bool,
+};
+
+TagInput.defaultProps = {
+  allowNew: false,
+  includeDescription: true,
 };
 
 export default TagInput;

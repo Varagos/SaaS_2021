@@ -11,13 +11,12 @@ import { ConfigService } from '@nestjs/config';
 export class AppController {
   constructor(
     private authService: AuthService,
-    private configService: ConfigService,
+    private configService: ConfigService
   ) {}
 
   @Get('publicKey')
   async sharePK(): Promise<string> {
     const res = this.configService.get<string>('JWT_PUBLIC_KEY');
-    console.log(res.length);
     return res;
   }
 }

@@ -2,12 +2,14 @@ import { HttpService, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { QuestionService } from './question/question.service';
 import { CommentService } from './comment/comment.service';
+import { UserService } from './user/user.service';
 
 @Injectable()
 export class AppService {
   constructor(
     private httpService: HttpService,
     private configService: ConfigService,
+    private userService: UserService,
     private questionService: QuestionService,
     private commentService: CommentService
   ) {}
@@ -17,6 +19,15 @@ export class AppService {
 
   async synchronizeData() {
     console.log('Starting database syncrhonization');
+    const newUsers = await this.getQuestionQueue('USER_ADDED');
+    console.log('new users:', newUsers);
+    await Promise.all(
+      newUsers.map(async (user) => {
+        await this.userService
+          .create(user)
+          .catch((error) => console.log(error));
+      })
+    );
 
     const newQuestions = await this.getQuestionQueue('QUESTION_ADDED');
     const deletedQuestions = await this.getQuestionQueue('QUESTION_DELETED');
@@ -30,8 +41,9 @@ export class AppService {
     console.log('array dif is:', finalQuestions);
     await Promise.all(
       finalQuestions.map(async (question) => {
-        const response = await this.questionService.create(question);
-        // console.log(response)
+        await this.questionService
+          .create(question)
+          .catch((error) => console.log(error));
       })
     );
 
@@ -52,8 +64,9 @@ export class AppService {
 
     await Promise.all(
       finalComments.map(async (comment) => {
-        const response = await this.formatAndCreateComment(comment);
-        console.log(response);
+        await this.formatAndCreateComment(comment).catch((error) =>
+          console.log(error)
+        );
       })
     );
   }
@@ -75,7 +88,6 @@ export class AppService {
     const { user_id, question_id, ...structuredComment } = commentObj;
     structuredComment.user = { user_id };
     structuredComment.question = { question_id };
-
     return this.commentService.create(structuredComment);
   }
 }

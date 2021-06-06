@@ -1,12 +1,16 @@
 import { useEffect } from 'react';
 import { useHistory, useParams } from 'react-router';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Container from 'react-bootstrap/Container';
+import queryString from 'query-string';
 import PaginationButtons from './components/PaginationButtons';
+import Filter from './components/FIlter';
 import { getQuestionsPage as getQuestionsPageAction } from './actions/questionActions';
+import { getKeywords as getKeywordsAction } from './actions/keywordActions';
 
 const QuestionList = ({
   questions,
@@ -15,19 +19,29 @@ const QuestionList = ({
   isAuthenticated,
   error,
   getQuestionsPage,
+  keywords,
+  getKeywords,
 }) => {
   const { id } = useParams();
 
-  const history = useHistory();
+  const { search } = useLocation();
+  const location = useLocation();
+  const { keywords: keywordParams } = queryString.parse(search, {
+    arrayFormat: 'bracket',
+  });
 
-  // Instead of componentDidMount
+  const history = useHistory();
+  useEffect(() => {
+    getKeywords();
+  }, []);
+  // Triggered on every useLocation change
   useEffect(() => {
     if (!isAuthenticated && id !== '1') history.push('/login');
     if (id < 1) history.push('/posts/page/1');
 
     // Perhaps new action getPage here instead?
-    getQuestionsPage(id);
-  }, [id]);
+    getQuestionsPage(id, keywordParams);
+  }, [location]);
 
   return (
     <>
@@ -36,7 +50,9 @@ const QuestionList = ({
         {questionsLoading && <div>Loading... </div>}
         {questions && (
           <>
-            <h2 className='pl-3'>Question List</h2>
+            {isAuthenticated && <Filter keywords={keywords} />}
+
+            <h2 className='pl-3'>All Questions</h2>
             {questions.map((question) => (
               <div className='blog-preview' key={question.question_id}>
                 <Link
@@ -97,6 +113,13 @@ QuestionList.propTypes = {
     id: PropTypes.string,
   }).isRequired,
   getQuestionsPage: PropTypes.func.isRequired,
+  keywords: PropTypes.arrayOf(
+    PropTypes.shape({
+      keyword_id: PropTypes.number,
+      description: PropTypes.string,
+    })
+  ).isRequired,
+  getKeywords: PropTypes.func.isRequired,
 };
 
 QuestionList.defaultProps = {
@@ -108,10 +131,12 @@ const mapStateToProps = (state) => ({
   questions: state.question.questions,
   questionsLoading: state.question.loading,
   lastPage: state.question.lastPage,
+  keywords: state.keyword.keywords,
   isAuthenticated: state.auth.isAuthenticated,
   error: state.error,
 });
 
 export default connect(mapStateToProps, {
   getQuestionsPage: getQuestionsPageAction,
+  getKeywords: getKeywordsAction,
 })(QuestionList);

@@ -1,6 +1,8 @@
 backend/dbClean.sh
 frontend/src/constants/
 
+ormconfig.json
+
 # Logs
 logs
 *.log

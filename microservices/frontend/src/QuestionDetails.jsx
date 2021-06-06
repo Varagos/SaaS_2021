@@ -7,6 +7,7 @@ import ListGroup from 'react-bootstrap/ListGroup';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 import ConfirmationModal from './components/ConfirmationModal';
 import NewComment from './components/NewComment';
 import Comment from './components/Comment';
@@ -66,6 +67,8 @@ const QuestionDetails = ({
                       variant='outline-dark'
                       className='mr-2'
                       size='sm'
+                      as={Link}
+                      to={`/posts/page/1?keywords[]=${keywordId}`}
                     >
                       {description}
                     </Button>

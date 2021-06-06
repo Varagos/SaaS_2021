@@ -4,33 +4,17 @@ import { InjectEntityManager } from '@nestjs/typeorm';
 import { EntityManager } from 'typeorm';
 import { Keyword } from '../keyword/entities/keyword.entity';
 import { Question } from './entities/question.entity';
-import { KeywordService } from '../keyword/keyword.service';
-import { User } from '../user/entities/user.entity';
 
 @Injectable()
 export class QuestionService {
-  constructor(
-    @InjectEntityManager() private manager: EntityManager,
-    private keywordService: KeywordService,
-  ) {}
+  constructor(@InjectEntityManager() private manager: EntityManager) {}
 
   async create(questionReceived: QuestionInterface) {
     await this.manager.transaction(async (manager) => {
-      //Executed async in parallel
-      const keyword_entities = await Promise.all(
-        questionReceived.keywords.map(async (keywordObj) => {
-          try {
-            return await this.keywordService.findOneByDesc(
-              keywordObj.description,
-            );
-          } catch (err) {
-            //Not found, so we can safely add
-            const newKeyword = new Keyword();
-            newKeyword.description = keywordObj.description;
-            await manager.save(newKeyword);
-            return newKeyword;
-          }
-        }),
+      const keyword_entities = questionReceived.keywords.map(
+        ({ keyword_id, description }) => {
+          return manager.create(Keyword, { keyword_id, description });
+        }
       );
       const userObj = { user_id: questionReceived.user_id };
       await manager.save(Question, {

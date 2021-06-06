@@ -20,8 +20,6 @@ export class QuestionController {
       console.log('Received Event:', data.type);
       await this.questionService.create(data.payload);
     }
-    // console.log('received event: question_created');
-    // await this.questionService.create(data);
   }
 
   @EventPattern('QUESTION_DELETED')

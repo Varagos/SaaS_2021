@@ -4,13 +4,13 @@ import {
   Entity,
   JoinTable,
   ManyToMany,
-  PrimaryGeneratedColumn,
+  PrimaryColumn,
 } from 'typeorm';
 import { Keyword } from '../../keyword/entities/keyword.entity';
 
 @Entity()
 export class Question {
-  @PrimaryGeneratedColumn()
+  @PrimaryColumn()
   question_id: number;
 
   @Column()

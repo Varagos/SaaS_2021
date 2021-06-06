@@ -35,7 +35,7 @@ const NewComment = ({ questionId, addComment }) => {
       <Collapse in={open}>
         <div id='collapse-input'>
           <Form onSubmit={handleSubmit}>
-            <Form.Label>Comment body</Form.Label>
+            <Form.Label>Your answer</Form.Label>
             <Form.Control
               as='textarea'
               rows={3}

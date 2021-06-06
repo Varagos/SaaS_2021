@@ -1,4 +1,5 @@
-import { IsDateString } from 'class-validator';
+import { IsDateString, IsInt, IsOptional, IsPositive } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class FindDatesParams {
   @IsDateString()
@@ -6,4 +7,15 @@ export class FindDatesParams {
 
   @IsDateString()
   end: Date;
+
+  @Type(() => Number)
+  @IsInt()
+  @IsPositive()
+  page: number;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @IsPositive()
+  limit: number;
 }

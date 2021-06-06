@@ -30,6 +30,11 @@ export class AppController {
     return 201;
   }
 
+  @Post('reset')
+  async resetStores() {
+    return await this.appService.resetStores();
+  }
+
   @Delete(':type')
   async remove(@Param() params) {
     return this.appService.deleteQueue(params.type);
