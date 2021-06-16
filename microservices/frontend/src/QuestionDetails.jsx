@@ -17,6 +17,7 @@ import {
   deleteComment as deleteCommentConnect,
 } from './actions/questionActions';
 import NotFound from './NotFound';
+import ErrorHandler from './components/ErrorHandler';
 
 dayjs.extend(relativeTime);
 
@@ -47,9 +48,12 @@ const QuestionDetails = ({
     <Container className='my-5 pt-3'>
       <div className='blog-details'>
         {questionLoading && <div>Loading... </div>}
-        {error.status && (
-          <div>{error.status === 404 ? <NotFound /> : error.msg}</div>
-        )}
+        {error.status &&
+          (error.status === 404 ? (
+            <NotFound />
+          ) : (
+            <ErrorHandler msg={error.msg} status={error.status} />
+          ))}
         {question && (
           <article>
             <div className='p-3 mb-5 rounded bg-light'>

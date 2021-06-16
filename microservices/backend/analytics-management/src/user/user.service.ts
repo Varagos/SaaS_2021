@@ -1,10 +1,33 @@
-import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectEntityManager } from '@nestjs/typeorm';
+import { EntityManager } from 'typeorm';
+import { User } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  constructor(@InjectEntityManager() private manager: EntityManager) {}
+
+  create(createUserDto): Promise<User> {
+    const user = this.manager.create(User, createUserDto);
+    return this.manager.save(user);
+  }
+
+  async findAll(): Promise<User[]> {
+    return this.manager.find(User);
+  }
+
+  async findOne(id: number): Promise<User> {
+    //Could add relations as 3rd argument(joins) if we had any
+    const user = await this.manager.findOne(User, id);
+    if (!user) throw new NotFoundException(`User ${id} not found.`);
+    return user;
+  }
+
+  async remove(id: number): Promise<void> {
+    return this.manager.transaction(async (manager) => {
+      const user = await manager.findOne(User, id);
+      if (!user) throw new NotFoundException(`User ${id} not found.`);
+      await manager.delete(User, id);
+    });
   }
 }

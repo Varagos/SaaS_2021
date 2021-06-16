@@ -52,8 +52,8 @@ Use `page` and optionally `limit` to paginate returned data.
 
 Default limit is 10 questions per page.
 ```bash
-GET /quesions/paginate?page=4
-GET /quesions/paginate?page=4&limit=20
+GET /questions/paginate?page=4
+GET /questions/paginate?page=4&limit=20
 ```
 
 ### Date slice Pagination
@@ -64,7 +64,7 @@ GET /questions/sort_dates?page=1&start=2017-01-01&end=2022-01-01
 
 ### Keywords Pagination
 Find question by filtering keywords 
-(One or many keywords can be provided)
+(One, or many keywords can be provided)
 ```bash
 GET /questions/keywords?page=1&keywords[]=1&keywords[]=5
 ```

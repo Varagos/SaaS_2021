@@ -20,12 +20,12 @@ export class KeywordService {
       return this.manager.save(Keyword, { ...createKeywordDto });
     }
     throw new BadRequestException(
-      `Keyword with description: ${createKeywordDto.description} exists`,
+      `Keyword with description: ${createKeywordDto.description} exists`
     );
   }
 
   async findAll() {
-    return `This action returns all keyword`;
+    return this.manager.find(Keyword);
   }
 
   // async findOne(id: number) {
@@ -37,7 +37,7 @@ export class KeywordService {
     const keyword = await this.manager.findOne(Keyword, { description: desc });
     if (!keyword)
       throw new NotFoundException(
-        `Keyword with description: ${desc} not found`,
+        `Keyword with description: ${desc} not found`
       );
     return keyword;
   }

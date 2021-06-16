@@ -7,9 +7,9 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import DatePicker from 'react-date-picker';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCog } from '@fortawesome/free-solid-svg-icons';
 import { useHistory } from 'react-router-dom';
+import dayjs from 'dayjs';
+import { BsFillFunnelFill } from 'react-icons/bs';
 import TagInput from './TagInput';
 
 const Filter = ({ keywords }) => {
@@ -39,13 +39,17 @@ const Filter = ({ keywords }) => {
     );
     const query = queryRaw.slice(0, -1); // Remove last character
 
-    handleClose();
+    // handleClose();
     history.push(`/posts/page/1${query}`);
   };
 
   const datesSubmit = (e) => {
     e.preventDefault();
-    handleClose();
+    const start = dayjs(startDate).format('YYYY-MM-DD');
+    const end = dayjs(endDate).format('YYYY-MM-DD');
+    const query = `?start=${start}&end=${end}`;
+    history.push(`/posts/page/1${query}`);
+    // handleClose();
   };
 
   const suggestion = keywords.map(({ keyword_id: keywordId, description }) => ({
@@ -62,7 +66,7 @@ const Filter = ({ keywords }) => {
           aria-controls='collapse-input'
           aria-expanded={open}
         >
-          <FontAwesomeIcon icon={faCog} /> Filter
+          <BsFillFunnelFill /> Filter
         </Button>
       </div>
       <Collapse in={open}>
@@ -76,12 +80,17 @@ const Filter = ({ keywords }) => {
                 <Col className='border-right'>
                   <h5>Sort by</h5>
                   <p className='mb-0 mt-2'>Start Date:</p>
-                  <DatePicker onChange={setStartDate} value={startDate} />
+                  <DatePicker
+                    onChange={setStartDate}
+                    value={startDate}
+                    format='dd-MM-y'
+                  />
                   <p className='mb-0 mt-2'>End Date:</p>
                   <DatePicker
                     onChange={setEndDate}
                     value={endDate}
                     minDate={startDate}
+                    format='dd-MM-y'
                   />
                   <br />
                   <Button

@@ -1,8 +1,16 @@
-import { Controller, Get, Body, Patch, Param } from '@nestjs/common';
-import { QuestionService } from './question.service';
-import { CreateQuestionDto } from './dto/create-question.dto';
-import { UpdateQuestionDto } from './dto/update-question.dto';
+import {
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { EventPattern } from '@nestjs/microservices';
+import { QuestionService } from './question.service';
+import { Question } from './entities/question.entity';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { MonthlyCountDto } from './dto/monthly-count.dto';
 
 @Controller('question')
 export class QuestionController {
@@ -23,21 +31,27 @@ export class QuestionController {
     await this.questionService.remove(question_id);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get()
-  findAll() {
+  async findAll(): Promise<Question[]> {
     return this.questionService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.questionService.findOne(+id);
+  @UseGuards(JwtAuthGuard)
+  @Get('count')
+  async count(@Query() query: MonthlyCountDto): Promise<Question[]> {
+    return this.questionService.daysCount(query.start, query.end);
   }
 
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateQuestionDto: UpdateQuestionDto,
-  ) {
-    return this.questionService.update(+id, updateQuestionDto);
+  @UseGuards(JwtAuthGuard)
+  @Get('monthly_count')
+  async monthlyCount(): Promise<Question[]> {
+    return this.questionService.monthlyCount();
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get(':id')
+  async findOne(@Param('id', ParseIntPipe) id: string): Promise<Question> {
+    return this.questionService.findOneWithRels(+id);
   }
 }

@@ -17,6 +17,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
 import PrivateRoute from './components/PrivateRoute';
+import AnalyticsDashboard from './AnalyticsDashboard';
 
 function App() {
   useEffect(() => {
@@ -35,6 +36,7 @@ function App() {
               </Route>
 
               <PrivateRoute path='/create' component={Create} />
+              <PrivateRoute path='/analytics' component={AnalyticsDashboard} />
 
               <Route exact path='/posts/page/:id'>
                 <QuestionList />

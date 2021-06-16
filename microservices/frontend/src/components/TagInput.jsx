@@ -25,7 +25,7 @@ const TagInput = ({
   }
 
   function onValidate(tag) {
-    return /^[a-z0-9-]{3,12}$/i.test(tag.name);
+    return /^[a-z0-9-]{3,20}$/i.test(tag.name);
   }
 
   return (

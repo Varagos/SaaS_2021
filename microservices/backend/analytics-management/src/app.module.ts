@@ -1,21 +1,29 @@
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
+import { HttpModule, Module } from '@nestjs/common';
 import { AppService } from './app.service';
 import { QuestionModule } from './question/question.module';
 import { CommentModule } from './comment/comment.module';
 import { KeywordModule } from './keyword/keyword.module';
 import { UserModule } from './user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule } from '@nestjs/config';
+import { Connection } from 'typeorm';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
+    TypeOrmModule.forRoot(),
     QuestionModule,
     CommentModule,
     KeywordModule,
     UserModule,
-    TypeOrmModule.forRoot(),
+    AuthModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    HttpModule,
   ],
-  controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+  constructor(private connection: Connection) {}
+}

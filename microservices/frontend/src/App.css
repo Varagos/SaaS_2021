@@ -8,8 +8,23 @@
 * {
     margin: 0;
     font-family: "Quicksand", serif;
-    color: #333;
 }
+
+.bg-indigo {
+    /*background-color: #575a89;*/
+    background-color: rgba(87, 90, 137, 0.9);
+}
+.analytics-carousel img {
+    height: 400px;
+}
+
+.rotated-img {
+    transform: scaleX(-1); }
+
+.footer-icon:hover {
+    transform: scale(1.2);
+}
+
 
 
 /* blog previews / list */

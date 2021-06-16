@@ -69,7 +69,7 @@ Add following lines inside ormconfig.json (removing synchronization is suggested
 ```  
 
 ```bash
-$ mkdir migrations
+$ mkdir migration
 $ npm run build
 ```
 

@@ -1,8 +1,8 @@
 import { Controller } from '@nestjs/common';
-import { CommentService } from './comment.service';
 import { EventPattern } from '@nestjs/microservices';
+import { CommentService } from './comment.service';
 
-@Controller('comment')
+@Controller('comments')
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 

@@ -6,11 +6,13 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Container from 'react-bootstrap/Container';
+import Alert from 'react-bootstrap/Alert';
 import queryString from 'query-string';
 import PaginationButtons from './components/PaginationButtons';
-import Filter from './components/FIlter';
+import Filter from './components/Filter';
 import { getQuestionsPage as getQuestionsPageAction } from './actions/questionActions';
 import { getKeywords as getKeywordsAction } from './actions/keywordActions';
+import ErrorHandler from './components/ErrorHandler';
 
 const QuestionList = ({
   questions,
@@ -26,9 +28,14 @@ const QuestionList = ({
 
   const { search } = useLocation();
   const location = useLocation();
-  const { keywords: keywordParams } = queryString.parse(search, {
+  const {
+    keywords: keywordParams,
+    start,
+    end,
+  } = queryString.parse(search, {
     arrayFormat: 'bracket',
   });
+  console.log('START', start, 'END', end);
 
   const history = useHistory();
   useEffect(() => {
@@ -40,17 +47,22 @@ const QuestionList = ({
     if (id < 1) history.push('/posts/page/1');
 
     // Perhaps new action getPage here instead?
-    getQuestionsPage(id, keywordParams);
+    getQuestionsPage(id, keywordParams, start, end);
   }, [location]);
 
   return (
     <>
       <Container fluid='sm' className='mt-5 p-3'>
-        {error.status && <div>{error.msg}</div>}
-        {questionsLoading && <div>Loading... </div>}
+        {questionsLoading && !error.status && <div>Loading... </div>}
+        {error.status && <ErrorHandler msg={error.msg} status={error.status} />}
         {questions && (
           <>
             {isAuthenticated && <Filter keywords={keywords} />}
+            {!isAuthenticated && (
+              <Alert variant='warning'>
+                You need to login before accessing questions
+              </Alert>
+            )}
 
             <h2 className='pl-3'>All Questions</h2>
             {questions.map((question) => (

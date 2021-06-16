@@ -23,36 +23,44 @@ export const setQuestionsLoading = () => ({
 });
 
 // thunk comes in allowing us to do asynchronous request
-export const getQuestionsPage = (page, keywords) => (dispatch, getState) => {
-  // params: { page, ...(keywords && { keywords }) },
-  dispatch(clearErrors());
-  dispatch(setQuestionsLoading());
-  console.log('keywords', keywords);
-  let config;
-  let url;
-  const baseUrl = `${browsing}/questions`;
-  if (keywords) {
-    config = {
-      ...tokenConfig(getState),
-      params: { page, keywords },
-    };
-    url = `${baseUrl}/keywords`;
-  } else {
-    config = { params: { page } };
-    url = `${baseUrl}/paginate`;
-  }
-  axios
-    .get(url, config)
-    .then((res) =>
-      dispatch({
-        type: GET_QUESTIONS,
-        payload: res.data,
-      })
-    )
-    .catch((err) =>
-      dispatch(returnErrors(err.response.data.message, err.response.status))
-    );
-};
+export const getQuestionsPage =
+  (page, keywords, start, end) => (dispatch, getState) => {
+    // params: { page, ...(keywords && { keywords }) },
+    dispatch(clearErrors());
+    dispatch(setQuestionsLoading());
+    console.log('keywords', keywords);
+    let config;
+    let url;
+    const baseUrl = `${browsing}/questions`;
+    if (start && end) {
+      config = {
+        ...tokenConfig(getState),
+        params: { page, start, end },
+      };
+      console.log(start, end);
+      url = `${baseUrl}/sort_dates`;
+    } else if (keywords) {
+      config = {
+        ...tokenConfig(getState),
+        params: { page, keywords },
+      };
+      url = `${baseUrl}/keywords`;
+    } else {
+      config = { params: { page } };
+      url = `${baseUrl}/paginate`;
+    }
+    axios
+      .get(url, config)
+      .then((res) =>
+        dispatch({
+          type: GET_QUESTIONS,
+          payload: res.data,
+        })
+      )
+      .catch((err) =>
+        dispatch(returnErrors(err.response.data.message, err.response.status))
+      );
+  };
 
 export const getQuestion = (id) => (dispatch, getState) => {
   dispatch(clearErrors());

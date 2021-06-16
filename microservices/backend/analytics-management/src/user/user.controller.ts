@@ -1,5 +1,5 @@
 import { Controller } from '@nestjs/common';
-import { EventPattern, Payload } from '@nestjs/microservices';
+import { EventPattern } from '@nestjs/microservices';
 import { UserService } from './user.service';
 import { CreateUserEventDto } from './dto/create-user.dto';
 

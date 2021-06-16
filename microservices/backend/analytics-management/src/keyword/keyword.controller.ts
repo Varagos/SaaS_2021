@@ -1,7 +1,12 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { KeywordService } from './keyword.service';
 
-@Controller('keyword')
+@Controller('keywords')
 export class KeywordController {
   constructor(private readonly keywordService: KeywordService) {}
+
+  @Get()
+  findAll() {
+    return this.keywordService.findAll();
+  }
 }

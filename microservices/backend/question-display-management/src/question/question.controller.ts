@@ -5,7 +5,7 @@ import {
   ParseIntPipe,
   UseGuards,
 } from '@nestjs/common';
-import { EventPattern, MessagePattern, Payload } from '@nestjs/microservices';
+import { EventPattern } from '@nestjs/microservices';
 import { QuestionService } from './question.service';
 import { Question } from './entities/question.entity';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
