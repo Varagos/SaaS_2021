@@ -7,24 +7,17 @@ import { useState } from 'react';
 const LineChart = ({ title, subTitle, data }) => {
   const [time, setTime] = useState(`${dayjs().hour()}:${dayjs().minute()}`);
 
+  const backgroundColor = ['rgb(255, 99, 132)', 'rgb(54, 162, 235)'];
+
+  const borderColor = ['rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)'];
   const state = {
     labels: data.labels,
-    datasets: [
-      {
-        label: data.datasets[0].label,
-        data: data.datasets[0].data,
-        fill: false,
-        backgroundColor: 'rgb(255, 99, 132)',
-        borderColor: 'rgba(255, 99, 132, 0.2)',
-      },
-      {
-        label: data.datasets[1].label,
-        fill: false,
-        data: data.datasets[1].data,
-        backgroundColor: 'rgb(54, 162, 235)',
-        borderColor: 'rgba(54, 162, 235, 0.2)',
-      },
-    ],
+    datasets: data.datasets.map(({ label, data: dataArr }, idx) => ({
+      label,
+      data: dataArr,
+      backgroundColor: backgroundColor[idx],
+      borderColor: borderColor[idx],
+    })),
   };
 
   const options = {

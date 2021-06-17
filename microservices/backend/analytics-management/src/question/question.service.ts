@@ -51,40 +51,57 @@ export class QuestionService {
 
   async daysCount(start: Date, end: Date) {
     let whereClause = '';
+    // Symmetric swap dates if one is greater than the other
     if (start && end) {
-      whereClause = `WHERE date BETWEEN '${start}' and '${end}'`;
+      whereClause = `WHERE date BETWEEN SYMMETRIC '${start}' and '${end}'`;
     }
     const rawData = await this.manager
-      .query(`SELECT date_trunc('day', date) as "Day", count(*) as "questionsCount"
+      .query(`SELECT date_trunc('day', date) + INTERVAL '1 day' as "Day", count(*) as "questions_count"
             FROM question
             ${whereClause}
             group by 1
             order by 1;`);
-    const initial = { labels: [], data: [] };
+    const initial = {
+      labels: [],
+      datasets: [
+        {
+          label: 'Questions',
+          data: [],
+        },
+      ],
+    };
     return rawData.reduce((acc, curr) => {
-      acc.labels.push(curr.Day);
-      acc.data.push(curr.questionsCount);
+      acc.labels.push(this.extractDate(curr.Day));
+      acc.datasets[0].data.push(curr.questions_count);
       return acc;
     }, initial);
-
-    // return await this.manager.find(Question, {
-    //   relations: ['keywords'],
-    //   where: { date: Between(start, end) },
-    //   order: { date: 'DESC' },
-    // });
   }
 
   async monthlyCount(): Promise<Question[]> {
     const rawData = await this.manager
-      .query(`SELECT to_char(date, 'Mon') as mon, count(*) as count
+      .query(`SELECT to_char(question.date, 'Mon') as mon,
+                    count(question.question_id) as "questions_count", count(comment_id) as "comments_count"
                     FROM question
+                    LEFT JOIN comment using(question_id)
                     group by 1
                     order by 1;`);
-    const initial = { labels: [], data: [] };
+    const initial = {
+      labels: [],
+      datasets: [
+        { label: 'Questions', data: [] },
+        { label: 'Answers', data: [] },
+      ],
+    };
     return rawData.reduce((acc, curr) => {
+      console.log(curr);
       acc.labels.push(curr.mon);
-      acc.data.push(curr.count);
+      acc.datasets[0].data.push(curr.questions_count);
+      acc.datasets[1].data.push(curr.comments_count);
       return acc;
     }, initial);
+  }
+
+  extractDate(myDate: Date): string {
+    return myDate.toISOString().slice(0, 10);
   }
 }

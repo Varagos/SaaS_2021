@@ -12,7 +12,7 @@ import { Question } from './entities/question.entity';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { MonthlyCountDto } from './dto/monthly-count.dto';
 
-@Controller('question')
+@Controller('questions')
 export class QuestionController {
   constructor(private readonly questionService: QuestionService) {}
 

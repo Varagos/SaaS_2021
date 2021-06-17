@@ -41,6 +41,7 @@ const QuestionList = ({
   useEffect(() => {
     getKeywords();
   }, []);
+
   // Triggered on every useLocation change
   useEffect(() => {
     if (!isAuthenticated && id !== '1') history.push('/login');

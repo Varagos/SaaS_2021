@@ -55,7 +55,9 @@ GET /keywords/most_used?start=YYYY-MM-DD&end=YYYY-MM-DD
 ### User related
 User behavior
 ```bash
+# Average questions per user on hourly basis
+GET /users/hourly_avg
 #Average questions/answers per hour of day
-GET /users/time_average
+#GET /users/time_average
 ```
 

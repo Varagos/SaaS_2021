@@ -2,6 +2,10 @@ import Tab from 'react-bootstrap/Tab';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Nav from 'react-bootstrap/Nav';
+
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+
 import {
   BsFillQuestionCircleFill,
   BsFillTagFill,
@@ -11,8 +15,9 @@ import {
 import QuestionAnalyticsPage from './components/analytics/QuestionAnalyticsPage';
 import UserAnalyticsPage from './components/analytics/UserAnalyticsPage';
 import KeywordAnalyticsPage from './components/analytics/KeywordAnalyticsPage';
+import ErrorHandler from './components/ErrorHandler';
 
-function AnalyticsDashboard() {
+function AnalyticsDashboard({ error }) {
   return (
     <Tab.Container id='left-tab' defaultActiveKey='questions'>
       <Row className='min-vh-100 vw-100'>
@@ -36,6 +41,9 @@ function AnalyticsDashboard() {
           </Nav>
         </Col>
         <Col md={10} className='bg-light p-4'>
+          {error.status && (
+            <ErrorHandler msg={error.msg} status={error.status} />
+          )}
           <Tab.Content>
             <Tab.Pane eventKey='questions'>
               <QuestionAnalyticsPage />
@@ -52,4 +60,16 @@ function AnalyticsDashboard() {
     </Tab.Container>
   );
 }
-export default AnalyticsDashboard;
+
+AnalyticsDashboard.propTypes = {
+  error: PropTypes.shape({
+    msg: PropTypes.string,
+    status: PropTypes.number,
+    id: PropTypes.string,
+  }).isRequired,
+};
+
+const mapStateToProps = (state) => ({
+  error: state.error,
+});
+export default connect(mapStateToProps, null)(AnalyticsDashboard);
