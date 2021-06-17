@@ -1,5 +1,4 @@
-import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
-import { EventPattern } from '@nestjs/microservices';
+import { Body, Controller, Get, Post, Query, UseGuards} from '@nestjs/common';
 import { QuestionService } from './question.service';
 import { Question } from './entities/question.entity';
 import { FindDatesParams } from './dto/find-dates-params';
@@ -11,16 +10,16 @@ import { PaginateKeywordsDto } from './dto/paginate-keywords.dto';
 export class QuestionController {
   constructor(private readonly questionService: QuestionService) {}
 
-  @EventPattern('QUESTION_ADDED')
-  async create(data) {
+  @Post('QUESTION_ADDED')
+  async create(@Body() data) {
     if (data.type) {
-      console.log('received event:', data.type);
+      console.log('received event from POST:', data.type);
       return this.questionService.create(data.payload);
     }
   }
 
-  @EventPattern('QUESTION_DELETED')
-  async remove(receivedData) {
+  @Post('QUESTION_DELETED')
+  async remove(@Body() receivedData) {
     console.log('received event:', receivedData.type);
     const { question_id } = receivedData.payload;
     await this.questionService.remove(+question_id);

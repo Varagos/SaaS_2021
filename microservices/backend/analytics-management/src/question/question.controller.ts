@@ -1,12 +1,13 @@
 import {
+  Body,
   Controller,
   Get,
   Param,
   ParseIntPipe,
+  Post,
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { EventPattern } from '@nestjs/microservices';
 import { QuestionService } from './question.service';
 import { Question } from './entities/question.entity';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -16,16 +17,16 @@ import { MonthlyCountDto } from './dto/monthly-count.dto';
 export class QuestionController {
   constructor(private readonly questionService: QuestionService) {}
 
-  @EventPattern('QUESTION_ADDED')
-  async create(data) {
+  @Post('QUESTION_ADDED')
+  async create(@Body() data) {
     if (data.type) {
       console.log('Received Event:', data.type);
       await this.questionService.create(data.payload);
     }
   }
 
-  @EventPattern('QUESTION_DELETED')
-  async remove(receivedData) {
+  @Post('QUESTION_DELETED')
+  async remove(@Body() receivedData) {
     console.log('received event:', receivedData.type);
     const { question_id } = receivedData.payload;
     await this.questionService.remove(question_id);

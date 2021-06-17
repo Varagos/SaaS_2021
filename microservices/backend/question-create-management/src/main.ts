@@ -10,7 +10,7 @@ async function bootstrap() {
   app.enableCors({
     origin: 'http://localhost:3000', // front end client
   });
-  await app.listen(5001);
+  await app.listen(process.env.PORT || 5001);
 }
 
 bootstrap();

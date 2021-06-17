@@ -1,13 +1,12 @@
-import { Controller } from '@nestjs/common';
-import { EventPattern } from '@nestjs/microservices';
+import { Body, Controller, Post} from '@nestjs/common';
 import { CommentService } from './comment.service';
 
 @Controller('comments')
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
-  @EventPattern('COMMENT_ADDED')
-  async create(receivedComment) {
+  @Post('COMMENT_ADDED')
+  async create(@Body() receivedComment) {
     const { user_id, question_id, ...structuredComment } =
       receivedComment.payload;
     structuredComment.user = { user_id };
@@ -16,8 +15,8 @@ export class CommentController {
     return this.commentService.create(structuredComment);
   }
 
-  @EventPattern('COMMENT_DELETED')
-  async remove(receivedData) {
+  @Post('COMMENT_DELETED')
+  async remove(@Body() receivedData) {
     const { comment_id } = receivedData.payload;
     return this.commentService.remove(comment_id);
   }

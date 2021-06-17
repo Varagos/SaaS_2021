@@ -15,15 +15,14 @@ import { UpdateCommentDto } from './dto/update-comment.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { DeleteOneParams } from './dto/delete-comment';
 import { UpdateOneParams } from './dto/update-comment-param';
-import { EventPattern } from '@nestjs/microservices';
 
 @Controller('comments')
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
-  @EventPattern('QUESTION_DELETED')
-  async removeQuestion(receivedData) {
-    console.log('received event', receivedData.payload);
+  @Post('QUESTION_DELETED')
+  async removeQuestion(@Body() receivedData) {
+    console.log('received event QUESTION_DELETED', receivedData.payload);
     const { question_id } = receivedData.payload;
     await this.commentService.removeQuestionComments(+question_id);
   }

@@ -14,6 +14,11 @@ export class AppController {
     private configService: ConfigService
   ) {}
 
+  @Get()
+  greet() {
+    return 'Hello traveller';
+  }
+
   @Get('publicKey')
   async sharePK(): Promise<string> {
     const res = this.configService.get<string>('JWT_PUBLIC_KEY');

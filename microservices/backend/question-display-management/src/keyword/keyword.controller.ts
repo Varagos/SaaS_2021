@@ -17,19 +17,4 @@ export class KeywordController {
   findAll() {
     return this.keywordService.findAll();
   }
-
-  // @MessagePattern('findOneKeyword')
-  // findOne(@Payload() id: number) {
-  //   return this.keywordService.findOne(id);
-  // }
-
-  // @MessagePattern('updateKeyword')
-  // update(@Payload() updateKeywordDto: UpdateKeywordDto) {
-  //   return this.keywordService.update(updateKeywordDto.id, updateKeywordDto);
-  // }
-  //
-  // @MessagePattern('removeKeyword')
-  // remove(@Payload() id: number) {
-  //   return this.keywordService.remove(id);
-  // }
 }

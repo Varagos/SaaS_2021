@@ -17,7 +17,7 @@ export default function Comment({
   deleteFunc,
 }) {
   return (
-    <Card>
+    <Card className='mb-4'>
       <Card.Body className='pt-3 mt-0'>
         <Card.Title className='d-flex p-0 m-0'>
           <div>

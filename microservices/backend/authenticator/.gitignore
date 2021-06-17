@@ -2,7 +2,6 @@
 #config files
 .env
 ormconfig.json
-src/auth/constants.ts
 jwtRS256.key
 #Could share it at some point
 jwtRS256.key.pub

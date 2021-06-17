@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import {HttpModule, Module} from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { RedisCacheModule } from './redis-cache/redis-cache.module';
@@ -6,7 +6,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ClientProxyFactory, Transport } from '@nestjs/microservices';
 
 @Module({
-  imports: [ConfigModule.forRoot(), RedisCacheModule],
+  imports: [ConfigModule.forRoot(), RedisCacheModule, HttpModule],
   controllers: [AppController],
   providers: [
     AppService,

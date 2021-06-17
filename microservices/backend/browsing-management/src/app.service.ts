@@ -14,7 +14,7 @@ export class AppService {
   }
 
   async synchronizeData() {
-    console.log('Starting database syncrhonization');
+    console.log('Starting database synchronization');
 
     const newQuestions = await this.getQuestionQueue('QUESTION_ADDED');
     const deletedQuestions = await this.getQuestionQueue('QUESTION_DELETED');

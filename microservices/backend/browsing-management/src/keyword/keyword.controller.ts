@@ -8,28 +8,8 @@ import { UpdateKeywordDto } from './dto/update-keyword.dto';
 export class KeywordController {
   constructor(private readonly keywordService: KeywordService) {}
 
-  @MessagePattern('createKeyword')
-  create(@Payload() createKeywordDto: CreateKeywordDto) {
-    return this.keywordService.create(createKeywordDto);
-  }
-
   @Get('')
   findAll() {
     return this.keywordService.findAll();
   }
-
-  // @MessagePattern('findOneKeyword')
-  // findOne(@Payload() id: number) {
-  //   return this.keywordService.findOne(id);
-  // }
-
-  // @MessagePattern('updateKeyword')
-  // update(@Payload() updateKeywordDto: UpdateKeywordDto) {
-  //   return this.keywordService.update(updateKeywordDto.id, updateKeywordDto);
-  // }
-  //
-  // @MessagePattern('removeKeyword')
-  // remove(@Payload() id: number) {
-  //   return this.keywordService.remove(id);
-  // }
 }
