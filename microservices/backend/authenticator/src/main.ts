@@ -6,9 +6,12 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe());
   app.enableCors({
-    origin: 'http://localhost:3000', // front end client
+    origin:
+      process.env.NODE_ENV === 'production'
+        ? 'https://askmeanything37-ms.herokuapp.com'
+        : 'http://localhost:3000', // dev front end client
   });
-  await app.listen(process.env.PORT || 5000,() =>{
+  await app.listen(process.env.PORT || 5000, () => {
     `authenticator started on port ${process.env.PORT || 5000}`;
   });
 }

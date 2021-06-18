@@ -7,7 +7,10 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   // const configService = app.get(ConfigService);
   app.enableCors({
-    origin: 'http://localhost:3000',
+    origin:
+      process.env.NODE_ENV === 'production'
+        ? 'https://askmeanything37-ms.herokuapp.com'
+        : 'http://localhost:3000', // dev front end client
   });
   await app.listen(process.env.PORT || 5005, async () => {
     console.log(
