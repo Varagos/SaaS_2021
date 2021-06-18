@@ -76,7 +76,7 @@ export class AppService {
     const port = this.configService.get('CHOREOGRAPHER_PORT');
     let url = `http://${host}:${port}/bus/${type}`;
     if (process.env.NODE_ENV === 'production') {
-      url = `http://${host}/bus/${type}`;
+      url = `https://${host}/bus/${type}`;
     }
 
     return await this.httpService

@@ -72,7 +72,7 @@ export class UserService {
     const port = this.configService.get<string>('CHOREOGRAPHER_PORT');
     let url = `http://${host}:${port}/bus`;
     if (process.env.NODE_ENV === 'production') {
-      url = `http://${host}/bus`;
+      url = `https://${host}/bus`;
     }
 
     this.httpService
