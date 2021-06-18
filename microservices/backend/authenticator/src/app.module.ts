@@ -24,7 +24,7 @@ import { config } from 'rxjs';
           rejectUnauthorized: false,
         },
         logging: true,
-        synchronize: true,
+        synchronize: false,
         migrations: ['dist/migration/*{.ts,.js}'],
         cli: {
           migrationsDir: 'migration',

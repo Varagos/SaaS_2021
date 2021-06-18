@@ -50,7 +50,10 @@ $ heroku config:set TIMES=2 --remote <remote-name>
 #or
 $ heroku config:set TIMES=2 --app <app-name>
 #Or
-$ heroku config:unset TIMES
+$ heroku config:unset TIMES  
+
+# Add pg database  
+$ heroku addons:create heroku-postgresql:hobby-dev --remote <remote-name>
 ```
 
 
