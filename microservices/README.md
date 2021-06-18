@@ -26,7 +26,9 @@ $ git subtree push --prefix <path/to/app> <heroku-remote-name> main
 ```
 <br />
 
-#### Other commands
+#### Other commands  
+Prive --remote <remote-name> or --app <app-name> when  
+dealing with more than 1 apps in same repo.
 ```bash
 # View logs
 $ heroku logs --tail
@@ -44,6 +46,9 @@ $ heroku config
 
 # Set config env var e.g.
 $ heroku config:set TIMES=2
+$ heroku config:set TIMES=2 --remote <remote-name>
+#or
+$ heroku config:set TIMES=2 --app <app-name>
 #Or
 $ heroku config:unset TIMES
 ```

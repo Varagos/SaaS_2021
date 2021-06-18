@@ -70,7 +70,10 @@ export class UserService {
     if (process.env.NODE_ENV === 'test') return;
     const host = this.configService.get<string>('CHOREOGRAPHER_HOST');
     const port = this.configService.get<string>('CHOREOGRAPHER_PORT');
-    const url = `http://${host}:${port}/bus`;
+    let url = `http://${host}:${port}/bus`;
+    if (process.env.NODE_ENV === 'production') {
+      url = `http://${host}/bus`;
+    }
 
     this.httpService
       .post(url, { type: eventType, payload: eventPayload })
