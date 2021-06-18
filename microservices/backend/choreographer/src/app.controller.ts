@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { AppService } from './app.service';
 import { ReceivedEventDto } from './dto/post-event.dto';
-import { AddSubscriberDto } from "./dto/add-subscriber.dto";
+import { AddSubscriberDto } from './dto/add-subscriber.dto';
 
 @Controller('bus')
 export class AppController {
