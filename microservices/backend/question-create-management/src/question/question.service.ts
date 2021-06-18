@@ -71,6 +71,7 @@ export class QuestionService {
     if (process.env.NODE_ENV === 'production') {
       url = `https://${host}/bus`;
     }
+    console.log(`Publishing event to ${url}`);
 
     this.httpService
       .post(url, {

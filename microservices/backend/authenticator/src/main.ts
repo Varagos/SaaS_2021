@@ -8,7 +8,10 @@ async function bootstrap() {
   app.enableCors({
     origin:
       process.env.NODE_ENV === 'production'
-        ? 'https://askmeanything37-ms.herokuapp.com'
+        ? [
+            'https://askmeanything37-ms.herokuapp.com', //frontend
+            'https://askmeanything37-question-cr.herokuapp.com',
+          ]
         : 'http://localhost:3000', // dev front end client
   });
   await app.listen(process.env.PORT || 5000, () => {
