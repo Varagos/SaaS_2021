@@ -20,6 +20,9 @@ import { config } from 'rxjs';
         password: configService.get('DATABASE_PASSWORD'),
         database: configService.get('DATABASE_NAME'),
         entities: ['dist/**/*.entity{.ts,.js}'],
+        ssl: {
+          rejectUnauthorized: false,
+        },
         logging: true,
         synchronize: false,
         migrations: ['dist/migration/*{.ts,.js}'],
