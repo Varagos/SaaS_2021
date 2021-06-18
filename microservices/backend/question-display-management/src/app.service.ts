@@ -13,9 +13,6 @@ export class AppService {
     private questionService: QuestionService,
     private commentService: CommentService
   ) {}
-  getHello(): string {
-    return '(: Hello World! :)';
-  }
 
   async synchronizeData() {
     console.log('Starting database syncrhonization');
@@ -74,7 +71,10 @@ export class AppService {
   async getQuestionQueue(type) {
     const host = this.configService.get('CHOREOGRAPHER_HOST');
     const port = this.configService.get('CHOREOGRAPHER_PORT');
-    const url = `http://${host}:${port}/bus/${type}`;
+    let url = `http://${host}:${port}/bus/${type}`;
+    if (process.env.NODE_ENV === 'production') {
+      url = `http://${host}/bus/${type}`;
+    }
     return await this.httpService
       .get(url)
       .toPromise()

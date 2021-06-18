@@ -20,7 +20,6 @@ async function bootstrap() {
   });
 
   const appService = app.get(AppService);
-  console.log(appService.getHello());
   await appService.synchronizeData();
 }
 bootstrap();
