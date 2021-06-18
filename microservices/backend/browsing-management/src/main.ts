@@ -9,7 +9,10 @@ async function bootstrap() {
   app.enableCors({
     origin:
       process.env.NODE_ENV === 'production'
-        ? 'https://askmeanything37-ms.herokuapp.com'
+        ? [
+            'https://askmeanything37-ms.herokuapp.com',
+            'https://askmeanything37-choreographer.herokuapp.com',
+          ]
         : 'http://localhost:3000', // dev front end client
   });
 
