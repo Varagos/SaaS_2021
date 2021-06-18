@@ -1,12 +1,10 @@
-import { HttpService, Inject, Injectable } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
+import { HttpService, Injectable } from '@nestjs/common';
 import { RedisCacheService } from './redis-cache/redis-cache.service';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class AppService {
   constructor(
-    @Inject('REDIS_PUB') private client: ClientProxy,
     private readonly redisCacheService: RedisCacheService,
     private httpService: HttpService
   ) {}
@@ -30,7 +28,6 @@ export class AppService {
         }
       );
     }
-    // return this.client.emit(event.type, event);
   }
 
   async storeEvent(event) {
