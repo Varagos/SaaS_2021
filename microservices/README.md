@@ -23,6 +23,9 @@ git add and commit changes
 Push a subdirectory as a heroku app  
 ```bash
 $ git subtree push --prefix <path/to/app> <heroku-remote-name> main
+
+# If pushing from a different branch than main
+$ git subtree push --prefix <path/to/app> <heroku-remote-name> <Other-branch>:main
 ```
 <br />
 
