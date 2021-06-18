@@ -18,10 +18,9 @@ import { User } from '../user/entities/user.entity';
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => {
         const options: JwtModuleOptions = {
-          privateKey:
-            process.env.NODE_ENV === 'production'
-              ? configService.get('JWT_PRIVATE_KEY').replace(/\\n/gm, '\n')
-              : configService.get('JWT_PRIVATE_KEY'),
+          privateKey: configService.get('JWT_PRIVATE_KEY'),
+          // process.env.NODE_ENV === 'production'
+          //   ? configService.get('JWT_PRIVATE_KEY').replace(/\\n/gm, '\n')
           publicKey: configService.get('JWT_PUBLIC_KEY'),
           secret: process.env.NODE_ENV === 'test' && 'secret-key',
           signOptions: {
