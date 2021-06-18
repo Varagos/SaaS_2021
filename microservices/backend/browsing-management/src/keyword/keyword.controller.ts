@@ -1,8 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
-import { MessagePattern, Payload } from '@nestjs/microservices';
 import { KeywordService } from './keyword.service';
-import { CreateKeywordDto } from './dto/create-keyword.dto';
-import { UpdateKeywordDto } from './dto/update-keyword.dto';
 
 @Controller('keywords')
 export class KeywordController {
