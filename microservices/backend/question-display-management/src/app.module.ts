@@ -26,7 +26,7 @@ import { AppService } from './app.service';
           rejectUnauthorized: false,
         },
         logging: true,
-        synchronize: true,
+        synchronize: false,
         migrations: ['dist/migration/*{.ts,.js}'],
         cli: {
           migrationsDir: 'migration',

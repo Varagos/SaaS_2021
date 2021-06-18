@@ -54,6 +54,9 @@ $ heroku config:unset TIMES
 
 # Add pg database  
 $ heroku addons:create heroku-postgresql:hobby-dev --remote <remote-name>
+
+# Open postgresql cli
+$ heroku pg:psql --remote <remote-name>
 ```
 
 
