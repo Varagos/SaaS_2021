@@ -3,6 +3,9 @@ SaaS team 37
 SECE NTUA 2021
 ---
 
+### Redis
+Choreographer's Redis server is currently hosted on <a href="www.redislabs.com">RedisLabs</a>
+
 
 ### Deployment tips
 Create `new heroku application` and connect it to a `new remote`  

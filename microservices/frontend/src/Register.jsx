@@ -24,18 +24,13 @@ function Register({ isAuthenticated, error, register, clearErrors }) {
   const history = useHistory();
 
   useEffect(() => {
-    console.log('Initial Use Effect called');
-    console.log('prevError: ', prevError.current);
-    console.log('props.error: ', error);
     clearErrors();
   }, []);
 
   useEffect(() => {
-    console.log('Dependencies Use Effect called');
     if (error !== prevError.current) {
       // Check for register error
       if (error.id === 'REGISTER_FAIL') {
-        console.log('REGISTER_FAIL');
         const msgReceived = Array.isArray(error.msg) ? error.msg[0] : error.msg;
         prevError.current = error;
         setMsg(msgReceived);
@@ -43,7 +38,6 @@ function Register({ isAuthenticated, error, register, clearErrors }) {
         setMsg(null);
       }
     }
-    console.log('isAuthenticated: ', isAuthenticated);
 
     if (isAuthenticated) {
       clearErrors();
