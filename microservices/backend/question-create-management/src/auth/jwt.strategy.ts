@@ -16,6 +16,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       algorithms: ['RS256'],
       secretOrKeyProvider: async (request, jwtToken, done) => {
         const publicKey = await this.authService.findPublicKey();
+        console.log('publicKey received:', publicKey);
         // On error publicKey is undefined => Unauthorized
         done(null, publicKey);
       },
