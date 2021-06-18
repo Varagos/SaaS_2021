@@ -13,7 +13,7 @@ export class AuthService {
     const port = this.configService.get('AUTHENTICATOR_PORT');
     let url = `http://${host}:${port}/publicKey`;
     if (process.env.NODE_ENV === 'production') {
-      url = `http://${host}/publicKey`;
+      url = `https://${host}/publicKey`;
     }
     const response = await this.httpService
       .get(url)
