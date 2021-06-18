@@ -22,6 +22,7 @@ export class AppController {
   @Get('publicKey')
   async sharePK(): Promise<string> {
     const res = this.configService.get<string>('JWT_PUBLIC_KEY');
+    return JSON.parse(JSON.stringify(res));
     return res;
   }
 }
