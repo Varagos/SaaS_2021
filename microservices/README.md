@@ -27,7 +27,7 @@ $ git subtree push --prefix <path/to/app> <heroku-remote-name> main
 <br />
 
 #### Other commands  
-Prive --remote <remote-name> or --app <app-name> when  
+Provide --remote <remote-name> or --app <app-name> when  
 dealing with more than 1 apps in same repo.
 ```bash
 # View logs
