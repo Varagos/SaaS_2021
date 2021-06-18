@@ -23,7 +23,7 @@ import { AuthModule } from './auth/auth.module';
           rejectUnauthorized: false,
         },
         logging: true,
-        synchronize: false,
+        synchronize: true,
         migrations: ['dist/migration/*{.ts,.js}'],
         cli: {
           migrationsDir: 'migration',
