@@ -1,7 +1,6 @@
 
 #config files
 .env
-ormconfig.json
 jwtRS256.key
 #Could share it at some point
 jwtRS256.key.pub
