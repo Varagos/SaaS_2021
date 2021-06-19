@@ -3,7 +3,7 @@ import { GET_KEYWORDS, KEYWORDS_LOADING } from './types';
 
 import { questionCreate } from '../constants/config';
 import { tokenConfig } from './authActions';
-import { returnErrors } from './errorActions';
+import { handleAxiosError } from './errorActions';
 
 export const setKeywordsLoading = () => ({
   type: KEYWORDS_LOADING,
@@ -20,7 +20,5 @@ export const getKeywords = () => (dispatch, getState) => {
         payload: res.data,
       })
     )
-    .catch((err) =>
-      dispatch(returnErrors(err.response.data.message, err.response.status))
-    );
+    .catch((error) => handleAxiosError(error, dispatch));
 };

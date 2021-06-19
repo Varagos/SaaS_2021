@@ -56,7 +56,7 @@ const QuestionList = ({
       <Container fluid='sm' className='mt-5 p-3'>
         {questionsLoading && !error.status && <div>Loading... </div>}
         {error.status && <ErrorHandler msg={error.msg} status={error.status} />}
-        {questions && (
+        {questions && !questionsLoading && !error.status && (
           <>
             {isAuthenticated && <Filter keywords={keywords} />}
             {!isAuthenticated && (

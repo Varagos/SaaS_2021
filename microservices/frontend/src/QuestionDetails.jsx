@@ -54,7 +54,7 @@ const QuestionDetails = ({
           ) : (
             <ErrorHandler msg={error.msg} status={error.status} />
           ))}
-        {question && !error.status && (
+        {question && !questionLoading && !error.status && (
           <article>
             <div className='p-3 mb-5 rounded bg-light'>
               <h3 className='mb-3'>{question.title}</h3>

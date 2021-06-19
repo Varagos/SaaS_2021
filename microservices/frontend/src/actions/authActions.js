@@ -9,7 +9,7 @@ import {
   REGISTER_SUCCESS,
   REGISTER_FAIL,
 } from './types';
-import { returnErrors } from './errorActions';
+import { returnErrors, handleAxiosError } from './errorActions';
 import { authenticator } from '../constants/config';
 
 // Setup config/headers and token
@@ -76,7 +76,7 @@ export const loadUser = () => (dispatch, getState) => {
       })
     )
     .catch((err) => {
-      dispatch(returnErrors(err.response.data.message, err.response.status));
+      handleAxiosError(err, dispatch);
       dispatch({
         type: AUTH_ERROR,
       });

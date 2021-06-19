@@ -16,7 +16,7 @@ import {
   commentCreate,
 } from '../constants/config';
 import { tokenConfig } from './authActions';
-import { clearErrors, returnErrors } from './errorActions';
+import { clearErrors, handleAxiosError } from './errorActions';
 
 export const setQuestionsLoading = () => ({
   type: QUESTIONS_LOADING,
@@ -57,9 +57,12 @@ export const getQuestionsPage =
           payload: res.data,
         })
       )
-      .catch((err) =>
-        dispatch(returnErrors(err.response.data.message, err.response.status))
-      );
+      .catch((err) => {
+        handleAxiosError(err, dispatch);
+        dispatch({
+          type: END_QUESTIONS_LOADING,
+        });
+      });
   };
 
 export const getQuestion = (id) => (dispatch, getState) => {
@@ -74,9 +77,7 @@ export const getQuestion = (id) => (dispatch, getState) => {
       })
     )
     .catch((error) => {
-      dispatch(
-        returnErrors(error.response.data.message, error.response.status)
-      );
+      handleAxiosError(error, dispatch);
       dispatch({
         type: END_QUESTIONS_LOADING,
       });
@@ -93,9 +94,7 @@ export const addQuestion = (question) => (dispatch, getState) => {
         payload: res.data, // res.data if backend returned the newly added question
       })
     )
-    .catch((error) =>
-      dispatch(returnErrors(error.response.data.message, error.response.status))
-    );
+    .catch((error) => handleAxiosError(error, dispatch));
 };
 
 export const deleteQuestion = (id) => (dispatch, getState) => {
@@ -108,9 +107,7 @@ export const deleteQuestion = (id) => (dispatch, getState) => {
         payload: id,
       })
     )
-    .catch((err) =>
-      dispatch(returnErrors(err.response.data.message, err.response.status))
-    );
+    .catch((error) => handleAxiosError(error, dispatch));
 };
 
 export const addComment = (comment) => (dispatch, getState) => {
@@ -124,11 +121,7 @@ export const addComment = (comment) => (dispatch, getState) => {
       // We need to call displayQuestion Service to show the new comment
       dispatch(getQuestion(res.data.question_id));
     })
-    .catch((error) => {
-      dispatch(
-        returnErrors(error.response.data.message, error.response.status)
-      );
-    });
+    .catch((error) => handleAxiosError(error, dispatch));
 };
 
 export const deleteComment = (id) => (dispatch, getState) => {
@@ -141,7 +134,5 @@ export const deleteComment = (id) => (dispatch, getState) => {
       });
       dispatch(getQuestion(res.data.question_id));
     })
-    .catch((error) =>
-      dispatch(returnErrors(error.response.data.message, error.response.status))
-    );
+    .catch((error) => handleAxiosError(error, dispatch));
 };

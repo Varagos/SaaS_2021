@@ -55,10 +55,11 @@ export default function (state = initialState, action) {
         ...state,
         loading: false,
       };
-    case ADD_COMMENT:
+    case ADD_COMMENT: {
       return {
         ...state,
       };
+    }
     case DELETE_COMMENT:
       return {
         ...state,
