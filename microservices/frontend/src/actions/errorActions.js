@@ -19,8 +19,7 @@ export const handleAxiosError = (error, dispatch) => {
     console.log(error.response.status);
     console.log(error.response.headers);
     dispatch(returnErrors(error.response.data.message, error.response.status));
-  }
-  if (error.request) {
+  } else if (error.request) {
     // The request was made but no response was received
     console.log(error.request);
     dispatch(returnErrors('Service Unavailable', 503));
