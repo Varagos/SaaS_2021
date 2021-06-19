@@ -13,6 +13,7 @@ import Filter from './components/Filter';
 import { getQuestionsPage as getQuestionsPageAction } from './actions/questionActions';
 import { getKeywords as getKeywordsAction } from './actions/keywordActions';
 import ErrorHandler from './components/ErrorHandler';
+import QuestionLoader from './components/QuestionLoader';
 
 const QuestionList = ({
   questions,
@@ -54,7 +55,7 @@ const QuestionList = ({
   return (
     <>
       <Container fluid='sm' className='mt-5 p-3'>
-        {questionsLoading && !error.status && <div>Loading... </div>}
+        {questionsLoading && !error.status && <QuestionLoader />}
         {error.status && <ErrorHandler msg={error.msg} status={error.status} />}
         {questions && !questionsLoading && !error.status && (
           <>
@@ -64,7 +65,6 @@ const QuestionList = ({
                 You need to login before accessing questions
               </Alert>
             )}
-
             <h2 className='pl-3'>All Questions</h2>
             {questions.map((question) => (
               <div className='blog-preview' key={question.question_id}>

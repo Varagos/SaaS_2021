@@ -41,7 +41,7 @@ const initialState = {
   usersLineLoading: false,
 };
 
-export default function (state = initialState, action) {
+export default (state = initialState, action) => {
   switch (action.type) {
     case FETCH_QUESTIONS_LINE:
       return {
@@ -90,4 +90,4 @@ export default function (state = initialState, action) {
     default:
       return state;
   }
-}
+};

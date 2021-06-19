@@ -16,7 +16,7 @@ const initialState = {
   loading: false,
 };
 
-export default function (state = initialState, action) {
+export default (state = initialState, action) => {
   // action is an object with a type attached
   switch (action.type) {
     case GET_QUESTIONS:
@@ -67,4 +67,4 @@ export default function (state = initialState, action) {
     default:
       return state;
   }
-}
+};

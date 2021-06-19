@@ -18,6 +18,7 @@ import {
 } from './actions/questionActions';
 import NotFound from './NotFound';
 import ErrorHandler from './components/ErrorHandler';
+import QuestionLoader from './components/QuestionLoader';
 
 dayjs.extend(relativeTime);
 
@@ -47,7 +48,7 @@ const QuestionDetails = ({
   return (
     <Container className='my-5 pt-3'>
       <div className='blog-details'>
-        {questionLoading && <div>Loading... </div>}
+        {questionLoading && <QuestionLoader />}
         {error.status &&
           (error.status === 404 ? (
             <NotFound />

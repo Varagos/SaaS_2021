@@ -2,8 +2,7 @@ import Table from 'react-bootstrap/Table';
 import PropTypes from 'prop-types';
 
 const QuestionTable = ({ data }) => {
-  const { labels, datasets } = data;
-  console.log(labels, datasets);
+  const { labels } = data;
   return (
     <Table striped bordered hover>
       <thead>
@@ -28,7 +27,12 @@ const QuestionTable = ({ data }) => {
 QuestionTable.propTypes = {
   data: PropTypes.shape({
     labels: PropTypes.arrayOf(PropTypes.string),
-    datasets: PropTypes.arrayOf({}),
+    datasets: PropTypes.arrayOf(
+      PropTypes.shape({
+        label: PropTypes.string,
+        data: PropTypes.arrayOf(PropTypes.number),
+      })
+    ),
   }).isRequired,
 };
 

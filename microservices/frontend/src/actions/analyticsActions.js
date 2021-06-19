@@ -13,7 +13,7 @@ import {
 import { analytics } from '../constants/config';
 
 import { tokenConfig } from './authActions';
-import { returnErrors } from './errorActions';
+import { handleAxiosError } from './errorActions';
 
 export const getQuestionsLine = (start, end) => (dispatch, getState) => {
   // dispatch(clearErrors());
@@ -36,9 +36,7 @@ export const getQuestionsLine = (start, end) => (dispatch, getState) => {
         payload: res.data,
       })
     )
-    .catch((err) =>
-      dispatch(returnErrors(err.response.data.message, err.response.status))
-    );
+    .catch((error) => handleAxiosError(error, dispatch));
 };
 
 export const getQuestionsBar = () => (dispatch, getState) => {
@@ -56,9 +54,7 @@ export const getQuestionsBar = () => (dispatch, getState) => {
         payload: res.data,
       })
     )
-    .catch((err) =>
-      dispatch(returnErrors(err.response.data.message, err.response.status))
-    );
+    .catch((error) => handleAxiosError(error, dispatch));
 };
 
 export const getKeywordsBar = (start, end) => (dispatch, getState) => {
@@ -82,9 +78,7 @@ export const getKeywordsBar = (start, end) => (dispatch, getState) => {
         payload: res.data,
       })
     )
-    .catch((err) =>
-      dispatch(returnErrors(err.response.data.message, err.response.status))
-    );
+    .catch((error) => handleAxiosError(error, dispatch));
 };
 
 export const getUsersLine = () => (dispatch, getState) => {
@@ -101,7 +95,5 @@ export const getUsersLine = () => (dispatch, getState) => {
         payload: res.data,
       })
     )
-    .catch((err) =>
-      dispatch(returnErrors(err.response.data.message, err.response.status))
-    );
+    .catch((error) => handleAxiosError(error, dispatch));
 };
