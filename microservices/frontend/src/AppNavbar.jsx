@@ -3,6 +3,7 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { BsPerson } from 'react-icons/bs';
 import Logout from './components/Logout';
 
 const AppNavbar = ({ auth }) => {
@@ -15,6 +16,9 @@ const AppNavbar = ({ auth }) => {
           {user ? `Welcome ${user.email}` : ''}
         </strong>
       </span>
+      <Link to='/account' className='nav-link'>
+        <BsPerson className='pb-1' size={28} /> My account page
+      </Link>
       <Logout />
     </>
   );
