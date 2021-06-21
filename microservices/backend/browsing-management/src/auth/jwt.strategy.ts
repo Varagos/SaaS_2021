@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { AuthService } from './auth.service';
+
 import { ConfigService } from '@nestjs/config';
 
 /*
@@ -9,16 +9,12 @@ import { ConfigService } from '@nestjs/config';
  */
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(private authService: AuthService) {
+  constructor(private configService: ConfigService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
       algorithms: ['RS256'],
-      secretOrKeyProvider: async (request, jwtToken, done) => {
-        const publicKey = await this.authService.findPublicKey();
-        // On error publicKey is undefined => Unauthorized
-        done(null, publicKey);
-      },
+      secretOrKey: configService.get('JWT_PUBLIC_KEY'),
     });
   }
 

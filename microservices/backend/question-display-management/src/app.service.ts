@@ -16,7 +16,8 @@ export class AppService {
 
   async synchronizeData() {
     console.log('Starting database syncrhonization');
-    const newUsers = await this.getQuestionQueue('USER_ADDED');
+    const [newUsers, error1] = await this.getQuestionQueue('USER_ADDED');
+    if (error1) return;
     console.log('new users:', newUsers);
     await Promise.all(
       newUsers.map(async (user) => {
@@ -26,8 +27,13 @@ export class AppService {
       })
     );
 
-    const newQuestions = await this.getQuestionQueue('QUESTION_ADDED');
-    const deletedQuestions = await this.getQuestionQueue('QUESTION_DELETED');
+    const [newQuestions, error2] = await this.getQuestionQueue(
+      'QUESTION_ADDED'
+    );
+    const [deletedQuestions, error3] = await this.getQuestionQueue(
+      'QUESTION_DELETED'
+    );
+    if (error2 || error3) return;
 
     const finalQuestions = newQuestions.filter(
       ({ question_id: id1 }) =>
@@ -44,8 +50,11 @@ export class AppService {
       })
     );
 
-    const newComments = await this.getQuestionQueue('COMMENT_ADDED');
-    const deletedComments = await this.getQuestionQueue('COMMENT_DELETED');
+    const [newComments, error4] = await this.getQuestionQueue('COMMENT_ADDED');
+    const [deletedComments, error5] = await this.getQuestionQueue(
+      'COMMENT_DELETED'
+    );
+    if (error4 || error5) return;
     let finalComments = newComments.filter(
       ({ comment_id: id1 }) =>
         !deletedComments.some(({ comment_id: id2 }) => id2 === id1)
@@ -75,13 +84,19 @@ export class AppService {
     if (process.env.NODE_ENV === 'production') {
       url = `https://${host}/bus/${type}`;
     }
-    return await this.httpService
-      .get(url)
-      .toPromise()
-      .then((response) => {
-        return response.data.map((event) => event.payload);
-      })
-      .catch((error) => console.log(error));
+    try {
+      const data = await this.httpService
+        .get(url)
+        .toPromise()
+        .then((response) => {
+          return response.data.map((event) => event.payload);
+        });
+      return [data, null];
+    } catch (error) {
+      console.log('CHOREOGRAPHER NOT RESPONDING');
+      console.log(error);
+      return [null, error];
+    }
   }
 
   async formatAndCreateComment(commentObj) {
