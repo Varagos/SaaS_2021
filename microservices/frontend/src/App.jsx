@@ -18,6 +18,7 @@ import './App.css';
 
 import PrivateRoute from './components/PrivateRoute';
 import AnalyticsDashboard from './AnalyticsDashboard';
+import AccountPage from './AccountPage';
 
 function App() {
   useEffect(() => {
@@ -34,6 +35,7 @@ function App() {
               <Route exact path='/'>
                 <Home />
               </Route>
+              <PrivateRoute path='/account' component={AccountPage} />
 
               <PrivateRoute path='/create' component={Create} />
               <PrivateRoute path='/analytics' component={AnalyticsDashboard} />

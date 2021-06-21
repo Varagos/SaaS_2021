@@ -63,4 +63,21 @@ export class UserService {
     const ampm = myTime < 12 || myTime === 24 ? 'AM' : 'PM';
     return `${h} ${ampm}`;
   }
+
+  async findUserQuestions(id: number): Promise<User> {
+    return this.manager
+      .createQueryBuilder(User, 'user')
+      .leftJoinAndSelect('user.questions', 'question')
+      .where('user.user_id = :user_id', { user_id: id })
+      .getOne();
+  }
+
+  async findUserAnswers(id: number) {
+    return await this.manager
+      .createQueryBuilder(User, 'user')
+      .leftJoinAndSelect('user.comments', 'comment')
+      .where('user.user_id = :user_id', { user_id: id })
+      .leftJoinAndSelect('comment.question', 'question')
+      .getOne();
+  }
 }

@@ -8,6 +8,8 @@ import {
   KEYWORDS_BAR_LOADING,
   FETCH_USERS_LINE,
   USERS_LINE_LOADING,
+  USER_PROFILE_LOADING,
+  FETCH_USER_PROFILE,
 } from './types';
 
 import { analytics } from '../constants/config';
@@ -92,6 +94,24 @@ export const getUsersLine = () => (dispatch, getState) => {
     .then((res) =>
       dispatch({
         type: FETCH_USERS_LINE,
+        payload: res.data,
+      })
+    )
+    .catch((error) => handleAxiosError(error, dispatch));
+};
+
+export const getAccountPage = () => (dispatch, getState) => {
+  // dispatch(clearErrors());
+  dispatch({ type: USER_PROFILE_LOADING });
+  const config = {
+    ...tokenConfig(getState),
+  };
+  const url = `${analytics}/users/profile`;
+  axios
+    .get(url, config)
+    .then((res) =>
+      dispatch({
+        type: FETCH_USER_PROFILE,
         payload: res.data,
       })
     )

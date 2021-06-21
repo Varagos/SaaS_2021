@@ -30,6 +30,7 @@ const QuestionDetails = ({
   getQuestion,
   deleteQuestion,
   deleteComment,
+  isAuthenticated,
 }) => {
   // pas id from ReactRouter Params
   const { id } = useParams();
@@ -53,9 +54,13 @@ const QuestionDetails = ({
           (error.status === 404 ? (
             <NotFound />
           ) : (
-            <ErrorHandler msg={error.msg} status={error.status} />
+            <ErrorHandler
+              msg={error.msg}
+              status={error.status}
+              isAuthenticated={isAuthenticated}
+            />
           ))}
-        {question && !questionLoading && !error.status && (
+        {question && !questionLoading && (
           <article>
             <div className='p-3 mb-5 rounded bg-light'>
               <h3 className='mb-3'>{question.title}</h3>
@@ -162,6 +167,7 @@ QuestionDetails.propTypes = {
   getQuestion: PropTypes.func.isRequired,
   deleteQuestion: PropTypes.func.isRequired,
   deleteComment: PropTypes.func.isRequired,
+  isAuthenticated: PropTypes.bool,
 };
 
 QuestionDetails.defaultProps = {
@@ -172,6 +178,7 @@ QuestionDetails.defaultProps = {
     status: null,
     id: null,
   }),
+  isAuthenticated: null,
 };
 
 const mapStateToProps = (state) => ({
@@ -179,6 +186,7 @@ const mapStateToProps = (state) => ({
   questionLoading: state.question.loading,
   user: state.auth.user,
   error: state.error,
+  isAuthenticated: state.auth.isAuthenticated,
 });
 
 export default connect(mapStateToProps, {

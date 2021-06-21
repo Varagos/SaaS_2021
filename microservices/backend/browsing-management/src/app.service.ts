@@ -16,8 +16,13 @@ export class AppService {
   async synchronizeData() {
     console.log('Starting database synchronization');
 
-    const newQuestions = await this.getQuestionQueue('QUESTION_ADDED');
-    const deletedQuestions = await this.getQuestionQueue('QUESTION_DELETED');
+    const [newQuestions, error1] = await this.getQuestionQueue(
+      'QUESTION_ADDED'
+    );
+    const [deletedQuestions, error2] = await this.getQuestionQueue(
+      'QUESTION_DELETED'
+    );
+    if (error1 || error2) return;
 
     const result = newQuestions.filter(
       ({ question_id: id1 }) =>
@@ -36,18 +41,18 @@ export class AppService {
     if (process.env.NODE_ENV === 'production') {
       url = `https://${host}/bus/${type}`;
     }
-    return await this.httpService
-      .get(url)
-      .toPromise()
-      .then((response) => {
-        return response.data.map((event) => event.payload);
-      });
-
-    // .subscribe(
-    //   (response) => {
-    //     return response.data.map((event) => event.payload.question);
-    //   },
-    //   (error) => console.log('ERROR', error)
-    // );
+    try {
+      const data = await this.httpService
+        .get(url)
+        .toPromise()
+        .then((response) => {
+          return response.data.map((event) => event.payload);
+        });
+      return [data, null];
+    } catch (error) {
+      console.log('CHOREOGRAPHER NOT RESPONDING');
+      console.log(error);
+      return [null, error];
+    }
   }
 }
