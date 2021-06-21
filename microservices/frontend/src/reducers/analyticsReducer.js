@@ -7,6 +7,8 @@ import {
   KEYWORDS_BAR_LOADING,
   FETCH_USERS_LINE,
   USERS_LINE_LOADING,
+  FETCH_USER_PROFILE,
+  USER_PROFILE_LOADING,
 } from '../actions/types';
 
 const initialState = {
@@ -39,6 +41,8 @@ const initialState = {
     ],
   },
   usersLineLoading: false,
+  profileInfo: { questions: [], comments: [] },
+  profileLoading: false,
 };
 
 export default (state = initialState, action) => {
@@ -86,6 +90,17 @@ export default (state = initialState, action) => {
       return {
         ...state,
         usersLineLoading: true,
+      };
+    case FETCH_USER_PROFILE:
+      return {
+        ...state,
+        profileInfo: action.payload,
+        profileLoading: false,
+      };
+    case USER_PROFILE_LOADING:
+      return {
+        ...state,
+        profileLoading: true,
       };
     default:
       return state;
