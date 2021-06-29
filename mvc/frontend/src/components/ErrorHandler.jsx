@@ -7,14 +7,14 @@ const ErrorHandler = ({ status, msg, logout, isAuthenticated }) => {
   console.log(status, typeof status);
   if (status === 401 && isAuthenticated) {
     logout();
-    if (status === 401) {
-      return <></>;
-    }
     return (
       <Alert variant='warning'>
         Your session has timed out. Please login again.
       </Alert>
     );
+  }
+  if (status === 401) {
+    return <></>;
   }
   return <div>{msg}</div>;
 };
