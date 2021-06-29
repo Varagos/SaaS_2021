@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   Req,
@@ -13,13 +12,13 @@ import {
 } from '@nestjs/common';
 import { QuestionsService } from './questions.service';
 import { CreateQuestionDto } from './dto/create-question.dto';
-import { UpdateQuestionDto } from './dto/update-question.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { DeleteQuestionDto } from './dto/delete-question.dto';
 import { PaginateDto } from './dto/paginate.dto';
 import { Question } from './entities/question.entity';
 import { PaginateKeywordsDto } from './dto/paginate-keywords.dto';
 import { FindDatesParams } from './dto/find-dates-params';
+import { MonthlyCountDto } from './dto/monthly-count.dto';
 
 @Controller('questions')
 export class QuestionsController {
@@ -41,6 +40,7 @@ export class QuestionsController {
     );
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('keywords')
   findByKeywords(@Query() query: PaginateKeywordsDto) {
     console.log('Received Query:', query);
@@ -61,6 +61,18 @@ export class QuestionsController {
       query.page - 1,
       query.limit,
     );
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('analytics/count')
+  async count(@Query() query: MonthlyCountDto): Promise<Question[]> {
+    return this.questionsService.daysCount(query.start, query.end);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('analytics/monthly_count')
+  async monthlyCount(): Promise<Question[]> {
+    return this.questionsService.monthlyCount();
   }
 
   @Get()

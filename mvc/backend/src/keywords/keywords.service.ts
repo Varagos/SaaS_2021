@@ -1,6 +1,4 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateKeywordDto } from './dto/create-keyword.dto';
-import { UpdateKeywordDto } from './dto/update-keyword.dto';
 import { Keyword } from './entities/keyword.entity';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { EntityManager } from 'typeorm';
@@ -8,9 +6,6 @@ import { EntityManager } from 'typeorm';
 @Injectable()
 export class KeywordsService {
   constructor(@InjectEntityManager() private manager: EntityManager) {}
-  create(createKeywordDto: CreateKeywordDto) {
-    return 'This action adds a new keyword';
-  }
 
   findAll(): Promise<Keyword[]> {
     return this.manager.find(Keyword);
@@ -29,11 +24,45 @@ export class KeywordsService {
     return keyword;
   }
 
-  update(id: number, updateKeywordDto: UpdateKeywordDto) {
-    return `This action updates a #${id} keyword`;
+  async mostUsed(start: Date, end: Date): Promise<Keyword[]> {
+    let result;
+    if (start && end) {
+      result = await this.manager
+        .createQueryBuilder(Keyword, 'keyword')
+        .select('keyword.keyword_id', 'id')
+        .addSelect('keyword.description', 'label')
+        .addSelect('COUNT(question)', 'count')
+        .leftJoin('keyword.questions', 'question')
+        .where('question.date BETWEEN :startDate AND :endDate', {
+          startDate: start,
+          endDate: end,
+        })
+        .groupBy('keyword.keyword_id')
+        .orderBy('count', 'DESC')
+        .limit(20)
+        .getRawMany();
+    } else {
+      result = await this.manager
+        .createQueryBuilder(Keyword, 'keyword')
+        .select('keyword.keyword_id', 'id')
+        .addSelect('keyword.description', 'label')
+        .addSelect('COUNT(question)', 'count')
+        .leftJoin('keyword.questions', 'question')
+        .groupBy('keyword.keyword_id')
+        .orderBy('count', 'DESC')
+        .limit(20)
+        .getRawMany();
+    }
+    console.log(result);
+    return this.splitDataToArrs(result);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} keyword`;
+  splitDataToArrs(rawData) {
+    const initial = { labels: [], datasets: [{ label: 'Keywords', data: [] }] };
+    return rawData.reduce((acc, curr) => {
+      acc.labels.push(curr.label);
+      acc.datasets[0].data.push(curr.count);
+      return acc;
+    }, initial);
   }
 }

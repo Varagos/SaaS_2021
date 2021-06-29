@@ -1,24 +1,25 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Get, Param, UseGuards, Request } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { Question } from '../questions/entities/question.entity';
 
 @Controller('users')
+@UseGuards(JwtAuthGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  @Get('/analytics/hourly_avg')
+  async monthlyCount(): Promise<Question[]> {
+    return this.usersService.hourlyCount();
+  }
+
+  @Get('/analytics/profile')
+  async findProfile(@Request() req) {
+    const { user_id } = req.user;
+    const userQuestions = await this.usersService.findUserQuestions(user_id);
+    const userAnswers = await this.usersService.findUserAnswers(user_id);
+    return { ...userQuestions, ...userAnswers };
   }
 
   @Get()
@@ -29,15 +30,5 @@ export class UsersController {
   @Get(':id')
   async findOne(@Param('id') id: string): Promise<User> {
     return this.usersService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
   }
 }

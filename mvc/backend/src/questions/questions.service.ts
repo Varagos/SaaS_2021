@@ -5,7 +5,6 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { CreateQuestionDto } from './dto/create-question.dto';
-import { UpdateQuestionDto } from './dto/update-question.dto';
 import { Keyword } from '../keywords/entities/keyword.entity';
 import { Question } from './entities/question.entity';
 import { InjectEntityManager } from '@nestjs/typeorm';
@@ -134,5 +133,61 @@ export class QuestionsService {
     );
     const finalPage = Math.ceil(questionsCount / limit) || 1; // return 1 if zero
     return { questions: questionsAsked, last: finalPage };
+  }
+
+  async daysCount(start: Date, end: Date) {
+    let whereClause = '';
+    // Symmetric swap dates if one is greater than the other
+    if (start && end) {
+      whereClause = `WHERE date BETWEEN SYMMETRIC '${start}' and '${end}'`;
+    }
+    const rawData = await this.manager
+      .query(`SELECT date_trunc('day', date) + INTERVAL '1 day' as "Day", count(*) as "questions_count"
+            FROM question
+            ${whereClause}
+            group by 1
+            order by 1;`);
+    const initial = {
+      labels: [],
+      datasets: [
+        {
+          label: 'Questions',
+          data: [],
+        },
+      ],
+    };
+    return rawData.reduce((acc, curr) => {
+      acc.labels.push(this.extractDate(curr.Day));
+      acc.datasets[0].data.push(curr.questions_count);
+      return acc;
+    }, initial);
+  }
+
+  async monthlyCount(): Promise<Question[]> {
+    const rawData = await this.manager
+      .query(`SELECT to_char(question.date, 'Mon') as mon,
+                    count(question.question_id) as "questions_count", count(comment_id) as "comments_count"
+                    FROM question
+                    LEFT JOIN comment using(question_id)
+                    group by 1
+                    order by 1;`);
+    const initial = {
+      labels: [],
+      datasets: [
+        { label: 'Questions', data: [] },
+        { label: 'Answers', data: [] },
+      ],
+    };
+    return rawData.reduce((acc, curr) => {
+      console.log(curr);
+      acc.labels.push(curr.mon);
+      acc.datasets[0].data.push(curr.questions_count);
+      acc.datasets[1].data.push(curr.comments_count);
+      return acc;
+    }, initial);
+  }
+
+  extractDate(myDate: Date): string {
+    return myDate.toISOString().slice(0, 10);
   }
 }
