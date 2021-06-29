@@ -1,20 +1,21 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
-  JoinTable,
   ManyToMany,
   ManyToOne,
   OneToMany,
-  PrimaryColumn,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Keyword } from '../../keyword/entities/keyword.entity';
-import { User } from '../../user/entities/user.entity';
-import { Comment } from '../../comment/entities/comment.entity';
+import { User } from '../../users/entities/user.entity';
+import { Keyword } from '../../keywords/entities/keyword.entity';
+import { JoinTable } from 'typeorm';
+import { Comment } from '../../comments/entities/comment.entity';
 
 @Entity()
 export class Question {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
   question_id: number;
 
   @Column()
@@ -23,8 +24,11 @@ export class Question {
   @Column({ type: 'text' })
   text: string;
 
-  @Column()
+  @CreateDateColumn()
   date: Date;
+
+  @Column({ nullable: true })
+  user_id: number;
 
   @ManyToOne(() => User, (user) => user.questions, {
     nullable: false,
@@ -33,9 +37,7 @@ export class Question {
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @ManyToMany((type) => Keyword, (keyword) => keyword.questions, {
-    cascade: true,
-  })
+  @ManyToMany(() => Keyword, (keyword) => keyword.questions, { cascade: true })
   @JoinTable()
   keywords: Keyword[];
 
