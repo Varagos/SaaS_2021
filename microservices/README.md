@@ -4,7 +4,7 @@ SECE NTUA 2021
 ---
 
 ### Redis
-Choreographer's Redis server is currently hosted on <a href="www.redislabs.com">RedisLabs</a>
+Choreographer's Redis server is currently hosted on <a href="https://www.redislabs.com">RedisLabs</a>
 
 
 ### Deployment tips
